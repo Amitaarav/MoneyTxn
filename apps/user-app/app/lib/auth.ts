@@ -4,14 +4,14 @@ import bcrypt from "bcrypt";
 
 export const authOptions = {
     providers: [
-      CredentialsProvider({
-          name: 'Credentials',
-          credentials: {
+    CredentialsProvider({
+        name: 'Credentials',
+        credentials: {
             phone: { label: "Phone number", type: "text", placeholder: "1231231231", required: true },
             password: { label: "Password", type: "password", required: true }
-          },
+        },
           // TODO: User credentials type from next-aut
-          async authorize(credentials: any) {
+        async authorize(credentials: any) {
             // Do zod validation, OTP validation here
             const hashedPassword = await bcrypt.hash(credentials.password, 10);
             const existingUser = await db.user.findFirst({
@@ -30,7 +30,7 @@ export const authOptions = {
                     }
                 }
                 return null;
-            }
+            } 
 
             try {
                 const user = await db.user.create({
@@ -50,7 +50,7 @@ export const authOptions = {
             }
 
             return null
-          },
+        },
         })
     ],
     secret: process.env.JWT_SECRET || "secret",
@@ -62,5 +62,4 @@ export const authOptions = {
             return session
         }
     }
-  }
-  
+}

@@ -10,6 +10,10 @@
   "devDependencies": {
     "@repo/eslint-config": "*",
     "@repo/typescript-config": "*",
+    "@types/estree": "^1.0.6",
+    "@types/express": "^5.0.0",
+    "@types/http-errors": "^2.0.4",
+    "@types/json-schema": "^7.0.15",
     "prettier": "^3.2.5",
     "turbo": "latest"
   },
