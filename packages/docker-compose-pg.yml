@@ -3,14 +3,14 @@ version: "3.8"
 services:
   db: 
     image: postgres:17.4
-    container_name: paytm_db
+    container_name: moneytxn_db
     restart: always
     environment:
-      POSTGRES_USER: root
+      POSTGRES_USER: amit
       POSTGRES_PASSWORD: amitaarav
-      POSTGRES_DB: mhoneydatabase
+      POSTGRES_DB: moneytxn_db
     ports:
-      - "5432:5432"
+      - "5436:5432"
     volumes:
       - ./data/db:/var/lib/postgresql/data
     
