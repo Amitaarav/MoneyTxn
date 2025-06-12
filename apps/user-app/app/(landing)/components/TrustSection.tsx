@@ -33,6 +33,12 @@ export default function TrustSection() {
     { icon: Award, value: "4.9/5", label: "User Rating" },
   ];
 
+  const active = testimonials[activeTestimonial];
+
+  if(!active) return null;
+
+  const rating = active.rating;
+
   return (
     <section className="py-24 bg-gradient-to-br from-blue-900 via-blue-800 to-purple-900 text-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -90,19 +96,19 @@ export default function TrustSection() {
             
             <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-8">
               <div className="flex items-center gap-1 mb-4">
-                {[...Array(testimonials[activeTestimonial].rating)].map((_, i) => (
+                {[...Array(rating)].map((_, i) => (
                   <Star key={i} className="h-5 w-5 fill-yellow-400 text-yellow-400" />
                 ))}
               </div>
               
               <p className="text-lg mb-6 leading-relaxed">
-                "{testimonials[activeTestimonial].text}"
+                "{testimonials[activeTestimonial]?.text}"
               </p>
               
               <div className="flex items-center justify-between">
                 <div>
-                  <div className="font-semibold">{testimonials[activeTestimonial].name}</div>
-                  <div className="text-blue-200 text-sm">{testimonials[activeTestimonial].country}</div>
+                  <div className="font-semibold">{testimonials[activeTestimonial]?.name}</div>
+                  <div className="text-blue-200 text-sm">{testimonials[activeTestimonial]?.country}</div>
                 </div>
               </div>
             </div>

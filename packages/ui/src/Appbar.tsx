@@ -13,9 +13,14 @@ export const Appbar = ({
     onSignin,
     onSignout,
 }: AppbarProps) => {
-    return <div className="flex justify-between border-b px-4">
-        <div className="text-xl flex flex-col justify-center font-bold">
-            MHoney
+    return <div className="bg-gradient-to-r from-blue-500 via-purple-500 to-orange-500 flex justify-between border-b px-4 py-2">
+        <div className="text-xl flex items-center justify-center font-bold">
+            <p className="bont-extrabold tex-xl">
+                Money
+            </p>
+            <p className="bont-extrabold text-[#6a51a6] text-2xl">
+                TXN
+            </p>
         </div>
         <div className="flex flex-col justify-center pt-2 ">
             <Button onClick={user ? onSignout : onSignin}>{user ? "Logout" : "Login"}</Button>

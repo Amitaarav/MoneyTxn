@@ -32,8 +32,8 @@ export default function HowItWorks() {
     <section className="py-24 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
-          <h2 className="text-3xl md:text-5xl font-bold text-gray-900 mb-6">
-            How It Works
+          <h2 className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent text-3xl md:text-5xl font-bold text-gray-900 mb-6">
+            How It Works ?
           </h2>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
             Sending money internationally has never been easier. 
@@ -50,7 +50,7 @@ export default function HowItWorks() {
               )}
               
               <div className="relative z-10">
-                <div className="w-20 h-20 mx-auto mb-6 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
+                <div className="w-20 h-20 mx-auto mb-6 bg-gradient-to-br from-red-500 to-purple-600 rounded-full flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
                   <step.icon className="h-10 w-10 text-white" />
                 </div>
                 

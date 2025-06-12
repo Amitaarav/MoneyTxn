@@ -1,6 +1,20 @@
 import db from "@repo/db/client";
 import CredentialsProvider from "next-auth/providers/credentials"
 import bcrypt from "bcrypt";
+import type { NextAuthOptions, Session, User } from "next-auth";
+import { JWT } from "next-auth/jwt";
+
+declare module "next-auth" {
+    interface Session {
+        user: {
+            id: string;
+            name?: string | null;
+            email?: string | null;
+            image?: string | null;
+        };
+        token?: JWT;
+    }
+}
 
 export const authOptions = {
     providers: [
@@ -10,10 +24,11 @@ export const authOptions = {
             phone: { label: "Phone number", type: "text", placeholder: "1231231231", required: true },
             password: { label: "Password", type: "password", required: true }
         },
-          // TODO: User credentials type from next-aut
         async authorize(credentials: any) {
-            // Do zod validation, OTP validation here
-            const hashedPassword = await bcrypt.hash(credentials.password, 10);
+            if(!credentials?.phone || !credentials?.password){
+                return null
+            }
+            
             const existingUser = await db.user.findFirst({
                 where: {
                     number: credentials.phone
@@ -31,9 +46,10 @@ export const authOptions = {
                 }
                 return null;
             } 
+            const hashedPassword = await bcrypt.hash(credentials.password, 10);
 
             try {
-                const user = await db.user.create({
+                const newUser = await db.user.create({
                     data: {
                         number: credentials.phone,
                         password: hashedPassword
@@ -41,25 +57,31 @@ export const authOptions = {
                 });
             
                 return {
-                    id: user.id.toString(),
-                    name: user.name,
-                    email: user.number
+                    id: newUser.id.toString(),
+                    name: newUser.name,
+                    email: newUser.number
                 }
             } catch(e) {
                 console.error(e);
+                return null;
             }
-
-            return null
         },
-        })
+    })
     ],
-    secret: process.env.JWT_SECRET || "secret",
+    secret: process.env.JWT_SECRET || "_secret_",
     callbacks: {
-        // TODO: can u fix the type here? Using any is bad
-        async session({ token, session }: any) {
-            session.user.id = token.sub
-
-            return session
+        async jwt({ token, user }: { token: JWT, user: User }) {
+            if (user) {
+                token.id = user.id;
+            }
+            return token;
+        },
+        async session({ token, session }: { token: JWT, session: Session }) {
+            if (token) {
+                session.user.id = token.id as string;
+                session.token = token; // Include the token in the session
+            }
+            return session;
         }
     }
 }
