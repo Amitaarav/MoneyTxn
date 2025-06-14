@@ -2,10 +2,16 @@
   "name": "@repo/store",
   "version": "1.0.0",
   "private": true,
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch"
+  },
   "dependencies": {
     "recoil": "^0.7.7"
   },
   "exports": {
-    "./balance": "./src/hooks/useBalance"
+    "./balance": "./dist/hooks/useBalance.js"
   }
 }

@@ -13,12 +13,12 @@ export const Appbar = ({
     onSignin,
     onSignout,
 }: AppbarProps) => {
-    return <div className="bg-gradient-to-r from-blue-500 via-purple-500 to-orange-500 flex justify-between border-b px-4 py-2">
-        <div className="text-xl flex items-center justify-center font-bold">
+    return <div className="flex flex justify-between border-b px-4 py-2 bg-gradient-to-r from-indigo-200 via-purple-500 to-pink-200 shadow-lg ">
+        <div className="text-3xl flex items-baseline justify-center font-extrabold">
             <p className="bont-extrabold tex-xl">
                 Money
             </p>
-            <p className="bont-extrabold text-[#6a51a6] text-2xl">
+            <p className="bont-extrabold bg-gradient-to-r from-blue-600 to-red-600 border-2 rounded-lg bg-clip-text text-transparent text-4xl">
                 TXN
             </p>
         </div>

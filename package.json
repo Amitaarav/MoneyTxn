@@ -5,7 +5,9 @@
     "build": "turbo build",
     "dev": "turbo dev",
     "lint": "turbo lint",
-    "format": "prettier --write \"**/*.{ts,tsx,md}\""
+    "format": "prettier --write \"**/*.{ts,tsx,md}\"",
+    "db:generate": "cd packages/db && npx prisma generate && cd ../..",
+    "start-user-app": "cd ./apps/user-app && npm run dev"
   },
   "devDependencies": {
     "@repo/eslint-config": "*",
@@ -14,6 +16,7 @@
     "@types/express": "^5.0.0",
     "@types/http-errors": "^2.0.4",
     "@types/json-schema": "^7.0.15",
+    "eslint-config-turbo": "^2.5.4",
     "prettier": "^3.2.5",
     "turbo": "latest"
   },

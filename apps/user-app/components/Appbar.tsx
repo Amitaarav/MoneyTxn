@@ -7,7 +7,7 @@ export function Appbar() {
     const router = useRouter();
 
     return (
-        <div className="border-b border-slate-300 h-16 flex justify-between items-center px-4 fixed w-full bg-gradient-to-r from-blue-500 to-purple-500">
+        <div className="border-b border-slate-300 h-16 flex justify-between items-center px-4 fixed w-full">
             <div className="text-xl font-bold">
                 MoneyTxn
             </div>

@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation"
 export default function HeroSection() {
   const router = useRouter();
   return (
-    <section className="relative overflow-hidden bg-gradient-to-br from-blue-50 via-white to-purple-50 pt-16 pb-24">
+    <section className="relative overflow-hidden bg-gradient-to-r from-blue-100 via-white to-purple-100 pt-16 pb-24">
       <div className="absolute inset-0 bg-grid-pattern opacity-5"></div>
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center">

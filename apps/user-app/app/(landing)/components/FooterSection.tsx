@@ -1,4 +1,5 @@
-import { Smartphone, Mail, MapPin, Facebook, Twitter, Instagram, Linkedin } from 'lucide-react';
+import { Smartphone, Mail, MapPin, Facebook, X, Instagram, Linkedin } from 'lucide-react';
+import { FiLinkedin, FiFacebook, FiTwitter, FiInstagram } from "react-icons/fi";
 import { useRouter } from "next/navigation"
 export default function Footer() {
   const router = useRouter();
@@ -19,22 +20,23 @@ export default function Footer() {
             </div>
             
             <div className="flex space-x-4">
-                <Facebook
+                <FiFacebook
                   onClick={() => window.open("https://www.facebook.com/", "_blank")}
                   className="h-6 w-6 text-gray-400 hover:text-blue-400 cursor-pointer transition-colors"
                 />
-                <Twitter
+                <FiTwitter
                   onClick={() => window.open("https://x.com/AmitAarav1205", "_blank")}
                   className="h-6 w-6 text-gray-400 hover:text-blue-400 cursor-pointer transition-colors"
                 />
-                <Instagram
+                <FiInstagram
                   onClick={() => window.open("http://instagram.com/amitaarav_8/", "_blank")}
                   className="h-6 w-6 text-gray-400 hover:text-pink-400 cursor-pointer transition-colors"
                 />
-                <Linkedin
+                <FiLinkedin
                   onClick={() => window.open("https://www.linkedin.com/in/amitkrgupta8", "_blank")}
                   className="h-6 w-6 text-gray-400 hover:text-blue-400 cursor-pointer transition-colors"
                 />
+              
               </div>
           </div>
 
