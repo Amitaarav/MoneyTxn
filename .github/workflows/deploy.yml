@@ -21,7 +21,7 @@ jobs:
               uses: docker/build-push-action@v2
               with:
                   context: .
-                  file: ./docker/Dockerfile.user-app
+                  file: ./docker/dockerfile.user-app
                   push: true
                   tags: ${{ secrets.DOCKER_USERNAME }}/moneytxn:latest
 
