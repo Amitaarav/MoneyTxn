@@ -35,13 +35,6 @@ async function getBalance() {
     
 }
 
-type Transaction = {
-    startTime: string;
-    amount: number;
-    status: string;
-    provider: string;
-    };
-
 async function getOnRampTransactions() {
     try {
         const session = await getServerSession(authOptions);
@@ -52,8 +45,9 @@ async function getOnRampTransactions() {
         }
     });
 
+    // here t takes types automatically from the prisma schema
     return txns.map((t) => ({
-        time: t.startTime,
+        time: new Date(t.startTime),
         amount: t.amount,
         status: t.status,
         provider: t.provider
