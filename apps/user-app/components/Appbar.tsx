@@ -13,7 +13,7 @@ interface AppbarProps {
 
 export const Appbar = ({ user, onSignin, onSignout }: AppbarProps) => {
   const router = useRouter();
-
+  const isLoggedIn = localStorage.getItem("token") !== null;
   const handleLogout = () => {
     localStorage.removeItem("token");
     onSignout(); // external signout logic
@@ -26,7 +26,7 @@ export const Appbar = ({ user, onSignin, onSignout }: AppbarProps) => {
   };
 
   return (
-    <div className="flex justify-between items-center border-b px-4 py-2 bg-gradient-to-r from-indigo-200 via-purple-500 to-pink-200 shadow-lg">
+    <div className="fixed top-0 left-0 right-0 flex justify-between items-center border-b px-4 py-2 bg-gradient-to-r from-indigo-200 via-purple-500 to-pink-200 shadow-lg ">
       <div className="text-3xl font-extrabold flex items-center gap-1">
         <span className="text-xl">Money</span>
         <span className="bg-gradient-to-r from-blue-600 to-red-600 border-2 rounded-lg bg-clip-text text-transparent text-4xl px-1">
@@ -34,10 +34,10 @@ export const Appbar = ({ user, onSignin, onSignout }: AppbarProps) => {
         </span>
       </div>
       <div>
-        {user?.name ? (
+        {isLoggedIn ? (
           <Button
             onClick={handleLogout}
-            className="bg-red-600 hover:bg-red-700 text-white"
+            className="bg-red-500 hover:bg-red-600 text-white"
           >
             Logout
           </Button>
@@ -53,3 +53,4 @@ export const Appbar = ({ user, onSignin, onSignout }: AppbarProps) => {
     </div>
   );
 };
+

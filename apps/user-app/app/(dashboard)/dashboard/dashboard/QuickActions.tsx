@@ -70,19 +70,19 @@ export default function QuickActions() {
             );
           })}
         </div>
-        
+        {/* Saving goal */}
         <div className="mt-6 p-4 bg-gradient-to-r from-[#6a51a6] to-[#8b5cf6] rounded-lg text-white">
           <div className="flex items-center mb-2">
             <PiggyBank className="w-5 h-5 mr-2" />
             <span className="font-semibold">Savings Goal</span>
           </div>
-          <p className="text-sm opacity-90 mb-3">Emergency Fund</p>
+          <p className="text-sm  mb-3">Emergency Fund</p>
           <div className="w-full bg-white bg-opacity-20 rounded-full h-2 mb-2">
             <div className="bg-white h-2 rounded-full" style={{ width: '40%' }}></div>
           </div>
-          <div className="flex justify-between text-xs opacity-75">
-            <span>$2,000</span>
-            <span>$5,000</span>
+          <div className="flex justify-between text-xs">
+            <span>₹2,000</span>
+            <span>₹5,000</span>
           </div>
         </div>
       </CardContent>

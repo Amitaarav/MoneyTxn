@@ -33,7 +33,7 @@ const allTransactions = [
     category: 'Food & Dining',
     description: 'Starbucks Coffee',
     amount: -8.50,
-    date: '2024-01-15',
+    date: '2025-01-15',
     status: 'completed',
     icon: Coffee,
     color: 'bg-orange-100 text-orange-600'
@@ -44,7 +44,7 @@ const allTransactions = [
     category: 'Salary',
     description: 'Monthly Salary',
     amount: 4250.00,
-    date: '2024-01-15',
+    date: '2025-02-15',
     status: 'completed',
     icon: ArrowUpRight,
     color: 'bg-green-100 text-green-600'
@@ -55,7 +55,7 @@ const allTransactions = [
     category: 'Shopping',
     description: 'Amazon Purchase',
     amount: -127.99,
-    date: '2024-01-14',
+    date: '2025-03-14',
     status: 'pending',
     icon: ShoppingBag,
     color: 'bg-blue-100 text-blue-600'
@@ -66,7 +66,7 @@ const allTransactions = [
     category: 'Transportation',
     description: 'Gas Station',
     amount: -45.20,
-    date: '2024-01-14',
+    date: '2025-04-14',
     status: 'completed',
     icon: Car,
     color: 'bg-gray-100 text-gray-600'
@@ -77,7 +77,7 @@ const allTransactions = [
     category: 'Bills',
     description: 'Electric Bill',
     amount: -89.30,
-    date: '2024-01-13',
+    date: '2025-05-13',
     status: 'completed',
     icon: Home,
     color: 'bg-yellow-100 text-yellow-600'
@@ -106,7 +106,7 @@ export default function TransactionsPage() {
           <h2 className="text-4xl font-bold text-gray-900">Transaction History</h2>
           <p className="text-gray-600 text-2xl">Manage and track all your transactions</p>
         </div>
-        <div className="flex gap-2">
+        <div className="grid gap-2 grid-cols-1 sm:grid-cols-1">
           <Button variant="outline">
             <Download className="w-4 h-4 mr-2" />
             Export
@@ -121,12 +121,12 @@ export default function TransactionsPage() {
       {/* Filters */}
       <Card>
         <CardHeader>
-          <CardTitle className="text-lg text-white">Filters & Search</CardTitle>
+          <CardTitle className="text-lg">Filters & Search</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+            <div className="">
+              <Search className="left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
               <Input
                 placeholder="Search transactions..."
                 value={searchTerm}
@@ -185,14 +185,14 @@ export default function TransactionsPage() {
               return (
                 <div 
                   key={transaction.id}
-                  className="flex items-center justify-between p-4 rounded-lg border hover:bg-gray-50 transition-colors duration-150"
+                  className="flex items-center justify-between p-4 rounded-lg border bg-white transition-colors duration-150"
                 >
                   <div className="flex items-center space-x-4">
                     <div className={`w-12 h-12 rounded-full ${transaction.color} flex items-center justify-center`}>
                       <Icon className="w-6 h-6" />
                     </div>
                     <div>
-                      <p className="font-medium text-gray-900">
+                      <p className="font-medium text-gray-900 text-xl">
                         {transaction.description}
                       </p>
                       <p className="text-sm text-gray-500">
@@ -203,12 +203,13 @@ export default function TransactionsPage() {
                   
                   <div className="flex items-center space-x-4">
                     <Badge 
-                      variant={transaction.status === 'completed' ? 'default' : 'secondary'}
+                      className={`px-2 py-1 text-xs font-medium rounded-lg ${transaction.status === 'completed' ? 'bg-green-200 text-green-800' : 'bg-gray-200 text-gray-800'}`}
+                      variant={transaction.status === 'completed' ? `default` : 'secondary'}
                     >
                       {transaction.status}
                     </Badge>
                     
-                    <div className="text-right">
+                    <div className="text-right text-2xl">
                       <p className={`font-semibold ${
                         transaction.amount > 0 ? 'text-green-600' : 'text-red-600'
                       }`}>

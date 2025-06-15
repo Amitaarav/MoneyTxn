@@ -4,7 +4,6 @@ import { Card, CardHeader, CardTitle, CardContent } from "@repo/ui/card";
 import { useState } from "react";
 import { TextInput } from "@repo/ui/textinput"
 import { Select } from "@repo/ui/select";
-import { Center } from "@repo/ui/center";
 import { createOnRampTransaction } from "app/lib/actions/createOnRamptxn";
 
 // Hardcoded bank
@@ -25,11 +24,11 @@ export const AddMoney = () => {
             <CardTitle>Add Money</CardTitle>
         </CardHeader>
         <CardContent>
-            <div className="w-full">
-                <TextInput label={"Amount"} placeholder={"Amount"} onChange={(value) => {
+            <div className="w-full text-gray-900">
+                <TextInput  label={"Amount"} placeholder={"Amount"} onChange={(value) => {
                     setAmount(Number(value))
                 }} />
-                <div className="py-4 text-left">
+                <div className="py-2 text-gray-900 text-left text-sm font-medium">
                     Bank
                 </div>
                 <Select onSelect={(value : any) => {
@@ -41,7 +40,7 @@ export const AddMoney = () => {
                 }))} />
                 <div className="flex justify-center pt-4">
                     <Button onClick={ async () => {
-                        await createOnRampTransaction(amount*100,provider)
+                        await createOnRampTransaction(amount, provider)
                         window.location.href = redirectUrl || "";
                     }}>
                     Add Money

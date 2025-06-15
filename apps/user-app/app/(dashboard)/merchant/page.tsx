@@ -57,7 +57,7 @@ const MerchantTransferCard = () => {
         <CardContent>
           <div className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="merchantId" className="text-white">Merchant ID</Label>
+              <Label htmlFor="merchantId" className="text-gray-950">Merchant ID</Label>
               <Input
                 id="merchantId"
                 type="text"
@@ -69,7 +69,7 @@ const MerchantTransferCard = () => {
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="amount" className="text-white">Amount</Label>
+              <Label htmlFor="amount" className="text-gray-900">Amount</Label>
               <Input
                 id="amount"
                 type="number"

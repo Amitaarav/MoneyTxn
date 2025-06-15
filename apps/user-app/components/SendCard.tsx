@@ -21,34 +21,6 @@ interface Transaction {
     };
 }
 
-/*************  ✨ Windsurf Command ⭐  *************/
-/**
- * SendCard is a React component that allows users to perform peer-to-peer (P2P)
- * money transfers. It provides input fields for the recipient's phone number and
- * the amount to be transferred, and displays buttons to initiate the transfer.
- * The component also fetches and displays recent transactions and contacts for
- * quick access. Upon a successful transfer, the component updates the list of
- * recent transactions.
- *
- * State:
- * - number: the phone number of the recipient
- * - amount: the amount of money to transfer
- * - loading: a boolean indicating whether the transfer is in progress
- * - recentTransactions: a list of recent transactions
- * - recentContacts: a list of recent contacts
- *
- * Effects:
- * - Fetches recent transactions and contacts on component mount
- *
- * Functions:
- * - fetchRecentTransactions: retrieves recent transactions from the server
- * - fetchRecentContacts: retrieves recent contacts from the server
- * - handleTransfer: handles the transfer process, including validation, 
- *   calling the p2pTransfer function, and updating state based on the result
- * - formatAmount: formats the amount of money in Indian Rupees
- */
-
-/*******  181e871c-c83a-4ca8-b0c4-b1685c15da2a  *******/
 export function SendCard() {
     const [number, setNumber] = useState("");
     const [amount, setAmount] = useState("");

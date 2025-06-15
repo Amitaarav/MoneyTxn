@@ -7,7 +7,7 @@ export default function DashboardLayout({
   return (
     <div className="min-h-screen flex flex-col md:flex-row">
       <div className="flex flex-1">
-        <aside className="w-72 border-r bg-slate-300 border-slate-300 hidden md:block pt-28 px-4">
+        <aside className="w-80 border-r bg-slate-100 border-slate-300 hidden md:block pt-28 px-4">
           <SidebarItem href="/dashboard" icon={<HomeIcon />} title="Home" />
           <SidebarItem href="/transfer" icon={<TransferIcon />} title="Transfer" />
           <SidebarItem href="/transaction" icon={<TransactionIcon />} title="Transaction" />

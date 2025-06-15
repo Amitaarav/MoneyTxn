@@ -64,7 +64,7 @@ export default async function Dashboard() {
     const transactions = await getOnRampTransactions();
 
     return (
-        <div className="w-full min-h-screen bg-gradient-to-b from-gray-100 to-gray-200 px-4 sm:px-6 lg:px-12">
+        <div className="w-full min-h-screen bg-gradient-to-b from-gray-100 to-gray-200 px-4 sm:px-6 lg:px-12 mt-4">
             <h1 className="text-3xl sm:text-4xl font-bold text-[#6a51a6] pt-8 mb-6 sm:mb-10">
                 Transfer
             </h1>
