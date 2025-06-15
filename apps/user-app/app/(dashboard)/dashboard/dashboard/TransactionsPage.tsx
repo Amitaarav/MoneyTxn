@@ -160,7 +160,10 @@ export default function TransactionsPage() {
               </SelectContent>
             </Select>
 
-            <Button variant="outline">
+            <Button
+            onClick={()=>{
+              setSearchTerm('');
+            }} variant="outline">
               <Calendar className="w-4 h-4 mr-2" />
               Date Range
             </Button>

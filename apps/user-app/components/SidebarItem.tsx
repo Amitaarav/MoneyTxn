@@ -24,11 +24,11 @@ export const SidebarItem = ({ href, title, icon }: SidebarItemProps) => {
       className={`${baseClasses} ${selectedClasses}`}
       onClick={() => router.push(href)}
     >
-      <div className="flex items-center space-x-2">
-        <div className={isSelected ? "text-white" : "text-gray-500"}>
+      <div className="flex items-center hover:text-white space-x-2">
+        <div className={isSelected ? "text-white" : "text-gray-500 hover:text-white"}>
           {icon}
         </div>
-        <div className={`font-bold ${isSelected ? "text-white" : "text-slate-500"}`}>
+        <div className={`font-bold ${isSelected ? "text-white" : "text-slate-500 hover:text-white"}`}>
           {title}
         </div>
       </div>

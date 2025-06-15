@@ -104,12 +104,12 @@ const BreadcrumbEllipsis = ({
 );
 BreadcrumbEllipsis.displayName = 'BreadcrumbElipssis';
 
-export {
-  Breadcrumb,
-  BreadcrumbList,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
-  BreadcrumbEllipsis,
-};
+// export {
+//   Breadcrumb,
+//   BreadcrumbList,
+//   BreadcrumbItem,
+//   BreadcrumbLink,
+//   BreadcrumbPage,
+//   BreadcrumbSeparator,
+//   BreadcrumbEllipsis,
+// };
