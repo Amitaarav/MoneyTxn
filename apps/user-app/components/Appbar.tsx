@@ -3,22 +3,53 @@
 import { useRouter } from "next/navigation";
 import { Button } from "@repo/ui/button";
 
-export function Appbar() {
-    const router = useRouter();
+interface AppbarProps {
+  user?: {
+    name?: string | null;
+  };
+  onSignin: () => void;
+  onSignout: () => void;
+}
 
-    return (
-        <div className="border-b border-slate-300 h-16 flex justify-between items-center px-4 fixed w-full">
-            <div className="text-xl font-bold">
-                MoneyTxn
-            </div>
-            <div>
-                <Button 
-                    onClick={() => router.push("/signin")}
-                    className="bg-blue-600 hover:bg-blue-700 text-white"
-                >
-                    Login
-                </Button>
-            </div>
-        </div>
-    );
-} 
+export const Appbar = ({ user, onSignin, onSignout }: AppbarProps) => {
+  const router = useRouter();
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    onSignout(); // external signout logic
+    router.push("/signin");
+  };
+
+  const handleLogin = () => {
+    onSignin();
+    router.push("/dashboard");
+  };
+
+  return (
+    <div className="flex justify-between items-center border-b px-4 py-2 bg-gradient-to-r from-indigo-200 via-purple-500 to-pink-200 shadow-lg">
+      <div className="text-3xl font-extrabold flex items-center gap-1">
+        <span className="text-xl">Money</span>
+        <span className="bg-gradient-to-r from-blue-600 to-red-600 border-2 rounded-lg bg-clip-text text-transparent text-4xl px-1">
+          TXN
+        </span>
+      </div>
+      <div>
+        {user?.name ? (
+          <Button
+            onClick={handleLogout}
+            className="bg-red-600 hover:bg-red-700 text-white"
+          >
+            Logout
+          </Button>
+        ) : (
+          <Button
+            onClick={handleLogin}
+            className="bg-blue-600 hover:bg-blue-700 text-white"
+          >
+            Login
+          </Button>
+        )}
+      </div>
+    </div>
+  );
+};

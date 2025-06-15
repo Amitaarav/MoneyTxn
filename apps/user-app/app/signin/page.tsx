@@ -24,7 +24,12 @@ export default function SignIn() {
                 headers: {
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify(formData),
+                body: JSON.stringify(
+                    {
+                        number: formData.number,
+                        password: formData.password,
+                    }
+                ),
             });
 
             const data = await response.json();
@@ -55,6 +60,7 @@ export default function SignIn() {
                             <Input
                                 id="number"
                                 type="tel"
+                                className="text-black"
                                 placeholder="Enter your phone number"
                                 value={formData.number}
                                 onChange={(e: React.ChangeEvent<HTMLInputElement>) =>

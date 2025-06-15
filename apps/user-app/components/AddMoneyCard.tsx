@@ -7,7 +7,7 @@ import { Select } from "@repo/ui/select";
 import { Center } from "@repo/ui/center";
 import { createOnRampTransaction } from "app/lib/actions/createOnRamptxn";
 
-
+// Hardcoded bank
 const SUPPORTED_BANKS = [{
     name: "HDFC Bank",
     redirectUrl: "https://netbanking.hdfcbank.com"

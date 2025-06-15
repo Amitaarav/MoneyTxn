@@ -1,4 +1,5 @@
 "use server"
+
 import { getServerSession } from "next-auth";
 import { authOptions } from "../auth";
 import prisma from "@repo/db/client"
@@ -7,6 +8,7 @@ export async function createOnRampTransaction( amount:number,provider:string) {
     
     const session = await getServerSession(authOptions);
 
+    // dummy token since we are simulating bank webhook. Do not have banking api
     const token = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
     const userId = session?.user.id;
 

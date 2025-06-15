@@ -57,23 +57,22 @@ export default function SignUp() {
     };
 
     return (
-        <div className="min-h-screen w-full flex items-center justify-center bg-gradient-to-b from-gray-100 to-purple-200">
-            <Card className="w-full max-w-md">
+        <div className="min-h-screen flex items-center justify-center px-4 bg-gradient-to-b from-gray-100 to-purple-200">
+            <Card className="">
                 <CardHeader>
-                    <CardTitle className="text-2xl text-center text-white">Create Account</CardTitle>
+                    <CardTitle className="text-3xl text-center text-white">Create Account</CardTitle>
                 </CardHeader>
                 <CardContent>
-                    <form onSubmit={handleSubmit} className="space-y-4 w-full">
+                    <form onSubmit={handleSubmit} className="space-y-5 w-full">
                         <div className="space-y-2">
                             <Label htmlFor="name">Full Name</Label>
                             <Input
                                 id="name"
                                 type="text"
                                 placeholder="Enter your full name"
+                                className="text-black"
                                 value={formData.name}
-                                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                                    setFormData({ ...formData, name: e.target.value })
-                                }
+                                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                                 required
                             />
                         </div>
@@ -83,10 +82,9 @@ export default function SignUp() {
                                 id="email"
                                 type="email"
                                 placeholder="Enter your email"
+                                className="text-black"
                                 value={formData.email}
-                                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                                    setFormData({ ...formData, email: e.target.value })
-                                }
+                                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                                 required
                             />
                         </div>
@@ -96,10 +94,9 @@ export default function SignUp() {
                                 id="number"
                                 type="tel"
                                 placeholder="Enter your phone number"
+                                className="text-black"
                                 value={formData.number}
-                                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                                    setFormData({ ...formData, number: e.target.value })
-                                }
+                                onChange={(e) => setFormData({ ...formData, number: e.target.value })}
                                 required
                             />
                         </div>
@@ -109,10 +106,9 @@ export default function SignUp() {
                                 id="password"
                                 type="password"
                                 placeholder="Create a password"
+                                className="text-black"
                                 value={formData.password}
-                                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                                    setFormData({ ...formData, password: e.target.value })
-                                }
+                                onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                                 required
                             />
                         </div>
@@ -122,18 +118,15 @@ export default function SignUp() {
                                 id="confirmPassword"
                                 type="password"
                                 placeholder="Confirm your password"
+                                className="text-black"
                                 value={formData.confirmPassword}
-                                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                                onChange={(e) =>
                                     setFormData({ ...formData, confirmPassword: e.target.value })
                                 }
                                 required
                             />
                         </div>
-                        <Button
-                            type="submit"
-                            className="w-full"
-                            disabled={loading}
-                        >
+                        <Button type="submit" className="w-full" disabled={loading}>
                             {loading ? "Creating account..." : "Create Account"}
                         </Button>
                         <div className="text-center text-sm">
@@ -147,4 +140,4 @@ export default function SignUp() {
             </Card>
         </div>
     );
-} 
+}

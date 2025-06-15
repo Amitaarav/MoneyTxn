@@ -1,19 +1,18 @@
 import { SidebarItem } from "components/SidebarItem";
-import { Appbar } from "components/Appbar";
-
 export default function DashboardLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col md:flex-row">
       <div className="flex flex-1">
-        <aside className="w-72 border-r border-slate-300 hidden md:block pt-28 px-4">
+        <aside className="w-72 border-r bg-slate-300 border-slate-300 hidden md:block pt-28 px-4">
           <SidebarItem href="/dashboard" icon={<HomeIcon />} title="Home" />
           <SidebarItem href="/transfer" icon={<TransferIcon />} title="Transfer" />
           <SidebarItem href="/transaction" icon={<TransactionIcon />} title="Transaction" />
           <SidebarItem href="/p2p" icon={<P2PTransferIcon />} title="P2P Transfer" />
+          <SidebarItem href="/merchant" icon={<MerchantIcon />} title="Merchant Transfer" />
         </aside>
         <main className="flex-1 p-4">{children}</main>
       </div>
@@ -53,3 +52,12 @@ function P2PTransferIcon() {
     </svg>
   );
 }
+
+function MerchantIcon() {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+    className="lucide lucide-scan-line-icon lucide-scan-line"><path d="M3 7V5a2 2 0 0 1 2-2h2"/><path d="M17 3h2a2 2 0 0 1 2 2v2"/><path d="M21 17v2a2 2 0 0 1-2 2h-2"/><path d="M7 21H5a2 2 0 0 1-2-2v-2"/><path d="M7 12h10"/></svg>
+  );
+}
+
+

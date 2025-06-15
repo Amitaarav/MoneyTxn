@@ -1,6 +1,6 @@
 "use client"
 import { signIn, signOut, useSession } from "next-auth/react";
-import { Appbar } from "@repo/ui/appbar";
+import { Appbar } from "./Appbar";
 import { useRouter } from "next/navigation";
 
 interface User {
@@ -9,9 +9,9 @@ interface User {
 }
 
 interface AppbarProps {
-  onSignin: (provider?: string, options?: object) => Promise<void>;
+  onSignin: () => void;
   onSignout: () => void;
-  user?: User; // make user optional
+  user?: User;
 }
 
 export function AppbarClient() {

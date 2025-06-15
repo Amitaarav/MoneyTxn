@@ -9,7 +9,7 @@ export const BalanceCard = ({amount, locked}: {
             <CardTitle>Balance</CardTitle>
         </CardHeader>
         <CardContent>
-            <div className="flex justify-between border-b border-slate-300 pb-2 w-1/2">
+            <div className="flex justify-between border-b border-slate-300 pb-2 ">
                 <div>
                     Unlocked balance
                 </div>
