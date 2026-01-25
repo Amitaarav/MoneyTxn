@@ -29,7 +29,7 @@ export default function HowItWorks() {
   ];
 
   return (
-    <section className="py-24 bg-white">
+    <section className="relative py-24 bg-white mt-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
           <h2 className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent text-3xl md:text-5xl font-bold text-gray-900 mb-6">

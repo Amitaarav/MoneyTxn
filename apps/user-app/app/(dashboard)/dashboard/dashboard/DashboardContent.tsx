@@ -1,10 +1,10 @@
 'use client';
 
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
-import { 
-  IndianRupee, 
-  TrendingUp, 
-  TrendingDown, 
+import {
+  IndianRupee,
+  TrendingUp,
+  TrendingDown,
   CreditCard,
   ArrowUpRight,
   ArrowDownRight,
@@ -15,54 +15,52 @@ import RecentTransactions from './RecentTransactions';
 import SpendingChart from './SpendingChart';
 import QuickActions from './QuickActions';
 
-export default function DashboardContent() {
+interface DashboardContentProps {
+  balance: { amount: number; locked: number };
+  recentTransactions: any[];
+  spendingStats: any[];
+}
+
+export default function DashboardContent({ balance, recentTransactions, spendingStats }: DashboardContentProps) {
   const stats = [
     {
       title: 'Total Balance',
-      value: '₹12,847.50',
-      change: '+12.5%',
+      value: `₹${(balance.amount / 100).toFixed(2)}`,
+      change: 'Available',
       trend: 'up',
       icon: IndianRupee,
       color: 'text-green-600'
     },
     {
-      title: 'This Month Income',
-      value: '₹4,250.00',
-      change: '+8.2%',
-      trend: 'up',
-      icon: TrendingUp,
-      color: 'text-blue-600'
-    },
-    {
-      title: 'This Month Expenses',
-      value: '₹2,890.30',
-      change: '-3.1%',
-      trend: 'down',
-      icon: TrendingDown,
-      color: 'text-red-600'
-    },
-    {
-      title: 'Active Cards',
-      value: '3',
-      change: 'No change',
+      title: 'Locked Balance',
+      value: `₹${(balance.locked / 100).toFixed(2)}`,
+      change: 'Pending',
       trend: 'neutral',
       icon: CreditCard,
       color: 'text-purple-600'
-    }
+    },
+    // We can add more real stats here later
   ];
-  const username = "Amit" as string;
+
   return (
     <div className="space-y-4">
       {/* Welcome Section */}
-      <div className="bg-gradient-to-r from-[#6a51a6] to-[#8b5cf6] rounded-xl p-6 text-white">
-        <h2 className="text-3xl font-bold mb-2">Welcome back, {username}!</h2>
-        <p className="text-purple-100 mb-4">
-          Here's your financial overview for today
-        </p>
-        <Button className="bg-white text-[#6a51a6] hover:bg-gray-100">
-          <Plus className="w-4 h-4 mr-2" />
-          Add Transaction
-        </Button>
+      <div className="relative overflow-hidden bg-gradient-to-br from-[#6a51a6] via-[#7c3aed] to-[#4f46e5] rounded-2xl p-8 text-white shadow-xl">
+        <div className="relative z-10">
+          <h2 className="text-4xl font-extrabold mb-3 tracking-tight">Welcome back!</h2>
+          <p className="text-purple-100 text-lg mb-6 max-w-md opacity-90">
+            Manage your wealth, track expenses and send money instantly anywhere in the world.
+          </p>
+          <div className="flex gap-4">
+            <Button className="bg-white text-[#6a51a6] hover:bg-white/90 font-bold px-6 py-2 rounded-xl transition-all hover:scale-105 active:scale-95 shadow-md">
+              <Plus className="w-5 h-5 mr-2" />
+              Add Money
+            </Button>
+          </div>
+        </div>
+        {/* Decorative elements */}
+        <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -mr-20 -mt-20 blur-3xl" />
+        <div className="absolute bottom-0 left-0 w-32 h-32 bg-purple-400/20 rounded-full -ml-10 -mb-10 blur-2xl" />
       </div>
 
       {/* Stats Grid */}
@@ -82,16 +80,7 @@ export default function DashboardContent() {
                   {stat.value}
                 </div>
                 <div className="flex items-center text-sm">
-                  {stat.trend === 'up' && (
-                    <ArrowUpRight className="w-4 h-4 text-green-500 mr-1" />
-                  )}
-                  {stat.trend === 'down' && (
-                    <ArrowDownRight className="w-4 h-4 text-red-500 mr-1" />
-                  )}
-                  <span className={
-                    stat.trend === 'up' ? 'text-green-600' :
-                    stat.trend === 'down' ? 'text-red-600' : 'text-gray-500'
-                  }>
+                  <span className="text-gray-500">
                     {stat.change}
                   </span>
                 </div>
@@ -105,9 +94,9 @@ export default function DashboardContent() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Spending Chart */}
         <div className="lg:col-span-2">
-          <SpendingChart />
+          <SpendingChart stats={spendingStats} />
         </div>
-        
+
         {/* Quick Actions */}
         <div>
           <QuickActions />
@@ -115,7 +104,7 @@ export default function DashboardContent() {
       </div>
 
       {/* Recent Transactions */}
-      <RecentTransactions />
+      <RecentTransactions transactions={recentTransactions} />
     </div>
   );
 }

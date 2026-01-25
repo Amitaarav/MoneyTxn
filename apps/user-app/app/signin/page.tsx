@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { signIn } from "next-auth/react";
 import { Card, CardContent, CardHeader, CardTitle, Input, Button, Label } from "@repo/ui";
 import { toast } from "sonner";
 import Link from "next/link";
@@ -19,29 +20,20 @@ export default function SignIn() {
         setLoading(true);
 
         try {
-            const response = await fetch("/api/auth/signin", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify(
-                    {
-                        number: formData.number,
-                        password: formData.password,
-                    }
-                ),
+            const res = await signIn("credentials", {
+                redirect: false,
+                phone: formData.number,
+                password: formData.password,
             });
 
-            const data = await response.json();
-
-            if (!response.ok) {
-                throw new Error(data.message || "Failed to sign in");
+            if (res?.error) {
+                toast.error(res.error);
+            } else {
+                toast.success("Signed in successfully");
+                router.push("/dashboard");
             }
-
-            toast.success("Signed in successfully");
-            router.push("/dashboard");
         } catch (error) {
-            toast.error(error instanceof Error ? error.message : "Failed to sign in");
+            toast.error("Something went wrong");
         } finally {
             setLoading(false);
         }

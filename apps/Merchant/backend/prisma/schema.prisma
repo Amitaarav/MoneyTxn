@@ -27,6 +27,7 @@ model Merchant {
   username String           @unique
   password String
   account  MerchantAccount?
+  qrCodeUrl String?         @unique
 }
 
 model UserAccount {

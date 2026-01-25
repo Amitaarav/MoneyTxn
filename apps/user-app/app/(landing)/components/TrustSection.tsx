@@ -40,7 +40,7 @@ export default function TrustSection() {
   const rating = active.rating;
 
   return (
-    <section className="py-24 bg-gradient-to-br from-blue-900 via-blue-800 to-purple-900 text-white">
+    <section className="py-24 bg-gradient-to-br from-red-900 via-blue-900 to-red-900 text-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
           <h2 className="text-3xl md:text-5xl font-bold mb-6">
@@ -67,7 +67,7 @@ export default function TrustSection() {
               ))}
             </div>
             
-            <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-8">
+            <div className="bg-white/10 backdrop-blur-sm rounded-2xl  p-8">
               <h3 className="text-2xl font-semibold mb-6">Security Features</h3>
               <div className="space-y-4">
                 <div className="flex items-center gap-3">

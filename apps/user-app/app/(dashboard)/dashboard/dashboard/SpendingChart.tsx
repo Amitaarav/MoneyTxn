@@ -3,14 +3,19 @@
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 import { Badge } from '../ui/badge';
 
-export default function SpendingChart() {
-  const data = [
-    { category: 'Food & Dining', amount: 450, percentage: 35, color: 'bg-orange-500' },
-    { category: 'Shopping', amount: 320, percentage: 25, color: 'bg-blue-500' },
-    { category: 'Transportation', amount: 180, percentage: 14, color: 'bg-gray-500' },
-    { category: 'Bills & Utilities', amount: 230, percentage: 18, color: 'bg-yellow-500' },
-    { category: 'Entertainment', amount: 100, percentage: 8, color: 'bg-purple-500' }
-  ];
+interface SpendingChartProps {
+  stats: {
+    category: string;
+    amount: number;
+    percentage: number;
+    color: string;
+  }[];
+}
+
+export default function SpendingChart({ stats }: SpendingChartProps) {
+  // Use stats from props, or fallback to empty if none provided
+  const data = stats.length > 0 ? stats : [];
+  const totalSpent = data.reduce((acc, item) => acc + item.amount, 0);
 
   return (
     <Card>
@@ -20,40 +25,44 @@ export default function SpendingChart() {
       </CardHeader>
       <CardContent>
         <div className="space-y-4">
-          {data.map((item, index) => (
-            <div key={index} className="space-y-2">
-              <div className="flex items-center justify-between">
-                <span className="text-sm font-medium text-gray-700">
-                  {item.category}
-                </span>
-                <div className="flex items-center space-x-2">
-                  <span className="text-sm font-semibold">
-                    ₹{item.amount}
+          {data.length === 0 ? (
+            <div className="text-center text-gray-500 py-8">
+              No spending data available
+            </div>
+          ) : (
+            data.map((item, index) => (
+              <div key={index} className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="text-sm font-medium text-gray-700">
+                    {item.category}
                   </span>
-                  <Badge variant="secondary" className="text-xs">
-                    {item.percentage}%
-                  </Badge>
+                  <div className="flex items-center space-x-2">
+                    <span className="text-sm font-semibold">
+                      ₹{item.amount / 100}
+                    </span>
+                    <Badge variant="secondary" className="text-xs">
+                      {item.percentage}%
+                    </Badge>
+                  </div>
+                </div>
+                <div className="w-full bg-gray-200 rounded-full h-2">
+                  <div
+                    className={`${item.color} h-2 rounded-full transition-all duration-300`}
+                    style={{ width: `${item.percentage}%` }}
+                  ></div>
                 </div>
               </div>
-              <div className="w-full bg-gray-200 rounded-full h-2">
-                <div 
-                  className={`${item.color} h-2 rounded-full transition-all duration-300`}
-                  style={{ width: `${item.percentage}%` }}
-                ></div>
-              </div>
+            ))
+          )}
+        </div>
+        {data.length > 0 && (
+          <div className="mt-6 p-4 bg-gray-50 rounded-lg">
+            <div className="flex justify-between items-center">
+              <span className="text-sm text-gray-600">Total Spent</span>
+              <span className="text-lg font-bold text-gray-900">₹{totalSpent / 100}</span>
             </div>
-          ))}
-        </div>
-        <div className="mt-6 p-4 bg-gray-50 rounded-lg">
-          <div className="flex justify-between items-center">
-            <span className="text-sm text-gray-600">Total Spent</span>
-            <span className="text-lg font-bold text-gray-900">₹1,280</span>
           </div>
-          <div className="flex justify-between items-center mt-1">
-            <span className="text-sm text-gray-600">Budget Remaining</span>
-            <span className="text-sm font-semibold text-green-600">₹720</span>
-          </div>
-        </div>
+        )}
       </CardContent>
     </Card>
   );

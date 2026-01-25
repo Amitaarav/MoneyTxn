@@ -1,19 +1,17 @@
-import prisma from "@repo/db/client";
-import { AddMoney } from "../../../components/AddMoneyCard";
+import { TransferActions } from "../../../components/TransferActions";
 import { BalanceCard } from "../../../components/BalanceCard";
 import { OnRampTransactions } from "../../../components/OnRampTransaction";
 import { getServerSession } from "next-auth";
 import { authOptions } from "../../lib/auth";
+import { ArrowLeftRight } from "lucide-react";
+import prisma from "@repo/db/client";
 
 async function getBalance() {
     try {
         const session = await getServerSession(authOptions);
         const userId = session?.user?.id;
 
-        if (!userId) {
-            console.error("User ID not found in session");
-            return { amount: 0, locked: 0 };
-        }
+        if (!userId) return { amount: 0, locked: 0 };
 
         const balance = await prisma.balance.findFirst({
             where: {
@@ -26,7 +24,6 @@ async function getBalance() {
             locked: balance?.locked || 0,
         };
     } catch (error) {
-        console.error("Error fetching balance:", error);
         return { amount: 0, locked: 0 };
     }
 }
@@ -36,15 +33,16 @@ async function getOnRampTransactions() {
         const session = await getServerSession(authOptions);
         const userId = session?.user?.id;
 
-        if (!userId) {
-            console.error("User ID not found in session");
-            return [];
-        }
+        if (!userId) return [];
 
         const txns = await prisma.onRampTransaction.findMany({
             where: {
                 userId: Number(userId),
             },
+            orderBy: {
+                startTime: 'desc'
+            },
+            take: 10
         });
 
         return txns.map((t) => ({
@@ -54,31 +52,59 @@ async function getOnRampTransactions() {
             provider: t.provider,
         }));
     } catch (error) {
-        console.error("Error fetching transactions:", error);
         return [];
     }
 }
 
-export default async function Dashboard() {
+export default async function TransferPage() {
     const balance = await getBalance();
     const transactions = await getOnRampTransactions();
 
     return (
-        <div className="w-full min-h-screen bg-gradient-to-b from-gray-100 to-gray-200 px-4 sm:px-6 lg:px-12 mt-4">
-            <h1 className="text-3xl sm:text-4xl font-bold text-[#6a51a6] pt-8 mb-6 sm:mb-10">
-                Transfer
-            </h1>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-10">
+            {/* Header Area */}
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                <div>
+                    <h1 className="text-4xl font-extrabold text-[#6a51a6] tracking-tight flex items-center gap-3">
+                        <ArrowLeftRight className="w-8 h-8" />
+                        Move Funds
+                    </h1>
+                    <p className="text-slate-500 text-lg font-medium mt-1">Manage your wallet balance and external bank transfers</p>
+                </div>
+            </div>
 
-            <div className="flex flex-wrap gap-8">
-                {/* Left Column */}
-                <div className="space-y-4">
-                    <AddMoney />
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+                {/* Left Side - Actions and History */}
+                <div className="lg:col-span-8 space-y-8">
+                    <section>
+                        <h3 className="text-sm font-black uppercase tracking-widest text-slate-400 mb-4 ml-1">Quick Actions</h3>
+                        <TransferActions />
+                    </section>
+
+                    <section>
+                        <h3 className="text-sm font-black uppercase tracking-widest text-slate-400 mb-4 ml-1">Recent Activity</h3>
+                        <OnRampTransactions transactions={transactions} />
+                    </section>
                 </div>
 
-                {/* Right Column */}
-                <div className="space-y-4 w-auto">
-                    <BalanceCard amount={balance.amount} locked={balance.locked} />
-                    <OnRampTransactions transactions={transactions} />
+                {/* Right Side - Balance Summary */}
+                <div className="lg:col-span-4 sticky top-24 space-y-8">
+                    <section>
+                        <h3 className="text-sm font-black uppercase tracking-widest text-slate-400 mb-4 ml-1">Wallet Card</h3>
+                        <BalanceCard amount={balance.amount} locked={balance.locked} />
+                    </section>
+
+                    {/* Secondary info card */}
+                    <div className="bg-[#6a51a6]/5 border border-[#6a51a6]/10 rounded-2xl p-6">
+                        <h4 className="text-[#6a51a6] font-bold text-sm mb-2 flex items-center gap-2">
+                            <ArrowLeftRight className="w-4 h-4" />
+                            Transfer limits
+                        </h4>
+                        <p className="text-xs text-slate-500 leading-relaxed font-medium">
+                            Your current daily transfer limit is <span className="text-[#6a51a6] font-bold">₹1,00,000</span>.
+                            Complete full KYC to increase your limits.
+                        </p>
+                    </div>
                 </div>
             </div>
         </div>

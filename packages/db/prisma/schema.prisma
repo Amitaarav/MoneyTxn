@@ -14,6 +14,7 @@ model User {
   number            String              @unique
   password          String
   OnRampTransaction OnRampTransaction[]
+  OffRampTransaction OffRampTransaction[]
   Balance           Balance[]
   sentTransfers     P2PTransfer[]      @relation(name: "FromUserRelation")
   receivedTransfers P2PTransfer[]      @relation(name:"ToUserRelation")
@@ -64,5 +65,16 @@ model P2PTransfer {
   fromUser   User         @relation(name: "FromUserRelation", fields: [fromUserId], references: [id])
   toUserId   Int
   toUser     User         @relation(name: "ToUserRelation", fields: [toUserId], references: [id])
+}
+
+model OffRampTransaction {
+  id        Int          @id @default(autoincrement())
+  status    OnRampStatus
+  token     String       @unique
+  provider  String
+  amount    Int
+  startTime DateTime
+  userId    Int
+  user      User         @relation(fields: [userId], references: [id])
 }
 
