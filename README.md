@@ -2,43 +2,62 @@
 
 MoneyTxn may be a digital wallet application, but it's built with a modern, scalable tech stack designed for production. This monorepo contains user and merchant applications, along with a dedicated webhook handler for bank transactions.
 
-## Architecture
+## 🏗️ Architectural Idea
+The core idea behind MoneyTxn is to provide a secure, scalable, and atomic transaction system. It follows a **Production-Ready Monorepo** pattern, separating concerns into individual apps (User App, Merchant App, Webhook Handlers) while sharing core logic (Database, UI, Configuration) through packages.
 
-This project is structured as a monorepo using [Turborepo](https://turbo.build/) to manage multiple applications and packages.
+## 📂 Project Structure
+Built using **Turborepo**, the project is structured as follows:
 
-- **Frontend**: Built with [Next.js](https://nextjs.org/), leveraging server-side rendering and static site generation for optimal performance.
-- **Backend**:
-  - **User & Merchant Apps**: Utilize Next.js Server Actions for secure and efficient backend logic.
-  - **Bank Webhook Handler**: A standalone [Express.js](https://expressjs.com/) server to handle high-volume webhook events from mock banks.
-- **Database**: [PostgreSQL](https://www.postgresql.org/) is used as the primary relational database, managed via [Prisma ORM](https://www.prisma.io/).
-- **State Management**: [Recoil](https://recoiljs.org/) is used for efficient global state management across React components.
-- **Authentication**: Secure authentication flows (details can be added here, e.g., NextAuth).
-
-## Project Structure
-
-```
-apps/
-├── user-app/            # Main wallet application for end-users
-├── merchant-app/        # Dashboard for merchants to manage their accounts
-├── bank-webhook-handler/# Node.js/Express server processing bank webhooks
-packages/
-├── ui/                  # Shared React UI component library
-├── db/                  # Prisma schema, client, and database connection logic
-├── store/               # Recoil atoms, selectors, and state logic
-├── eslint-config/       # Shared ESLint configurations for code consistency
-└── typescript-config/   # Shared tsconfig bases for uniform compilation
+```bash
+MoneyTxn/
+├── apps/
+│   ├── user-app/            # Next.js app for end-users
+│   ├── merchant-app/        # Next.js/React app for merchants
+│   └── bank-webhook-handler/ # Express service to handle bank callbacks
+├── packages/
+│   ├── db/                  # Prisma schema and shared DB client
+│   ├── ui/                  # Shared React component library
+│   ├── store/               # Shared state management (Recoil)
+│   ├── tsconfig/            # Shared TypeScript configurations
+│   └── eslint-config/       # Shared ESLint configurations
+└── docker/                  # Dockerization scripts
 ```
 
-## detailed Tech Stack
+## 🛠️ Tech Stack & Rationale
 
-- **Monorepo Tooling**: Turborepo
-- **Framework**: Next.js 14
-- **Language**: TypeScript
-- **Database**: PostgreSQL
-- **ORM**: Prisma
-- **Styling**: Tailwind CSS
-- **Containerization**: Docker
-- **Package Manager**: npm / pnpm
+| Technology | Usage | Rationale |
+| :--- | :--- | :--- |
+| **Next.js (App Router)** | User/Merchant Apps | Server-Side Rendering (SSR) for SEO, Server Actions for secure DB mutations, and optimized routing. |
+| **TypeScript** | Language-wide | Ensures type safety across the entire monorepo, reducing runtime errors. |
+| **PostgreSQL** | Primary Database | Relational database with strong ACID properties, essential for financial transactions. |
+| **Prisma** | ORM | Type-safe database access and easy migration management. |
+| **Express** | Webhook Handler | Lightweight and fast for handling asynchronous bank notifications. |
+| **NextAuth.js** | Authentication | Standardized, secure authentication with support for multiple providers. |
+| **Tailwind CSS** | Styling | Rapid UI development with a utility-first approach. |
+| **Recoil** | State Management | Fine-grained state control for complex UI interactions in the apps. |
+| **Turborepo** | Build System | Optimizes builds and task execution across multiple packages and apps. |
+
+## ⚙️ System Design & Core Flow
+
+### 1. On-Ramping (Adding Money)
+The system uses an asynchronous webhook-based approach to add money from a bank.
+
+1.  **Request**: User initiates a transaction in the `user-app`.
+2.  **Pending State**: An `OnRampTransaction` is created with status `Processing`.
+3.  **Webhook**: The bank server sends a POST request to `bank-webhook-handler`.
+4.  **Atomicity**: The webhook handler uses a database transaction to increment the user's balance and mark the transaction as `Success` simultaneously.
+
+### 2. P2P Transfer (User-to-User)
+To prevent "Double Spending" and ensure data consistency, the system uses **Database-Level Row Locking**.
+
+- **Mechanism**: `SELECT ... FOR UPDATE` in a Prisma raw query prevents concurrent modifications to the same balance row.
+- **Atomicity**: Increments, decrements, and transaction logging happen within a single ACID-compliant database transaction.
+
+## 🔒 Security & Performance
+- **Webhook Secrets**: Validated on every request to `bank-webhook-handler`.
+- **Atomic Transactions**: Guarantees that money is never "created" or "lost" during transfers.
+- **Monorepo Efficiency**: Shared packages ensure consistency across User and Merchant platforms.
+- **Row Locking**: prevents race conditions when multiple transfers happen simultaneously.
 
 ## Getting Started
 

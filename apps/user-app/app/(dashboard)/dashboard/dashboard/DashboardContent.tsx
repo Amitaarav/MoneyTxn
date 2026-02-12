@@ -93,18 +93,18 @@ export default function DashboardContent({ balance, recentTransactions, spending
       {/* Main Content Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Spending Chart */}
-        <div className="lg:col-span-2">
+        <div className="lg:col-span-2 space-y-2">
           <SpendingChart stats={spendingStats} />
+          {/* Recent Transactions */}
+          <RecentTransactions transactions={recentTransactions} />
         </div>
 
         {/* Quick Actions */}
-        <div>
+        <div className="lg:col-span-1">
           <QuickActions />
         </div>
       </div>
 
-      {/* Recent Transactions */}
-      <RecentTransactions transactions={recentTransactions} />
     </div>
   );
 }
