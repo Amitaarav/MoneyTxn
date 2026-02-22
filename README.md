@@ -5,6 +5,28 @@ MoneyTxn may be a digital wallet application, but it's built with a modern, scal
 ## 🏗️ Architectural Idea
 The core idea behind MoneyTxn is to provide a secure, scalable, and atomic transaction system. It follows a **Production-Ready Monorepo** pattern, separating concerns into individual apps (User App, Merchant App, Webhook Handlers) while sharing core logic (Database, UI, Configuration) through packages.
 
+```mermaid
+graph TD
+    subgraph Apps
+        UA[User App]
+        MA[Merchant App]
+        BWH[Bank Webhook Handler]
+    end
+    subgraph Shared Packages
+        DB[Database Client]
+        UI[Shared UI Components]
+        STORE[Shared Store]
+    end
+    UA --> DB
+    MA --> DB
+    BWH --> DB
+    UA --> UI
+    MA --> UI
+    UA --> STORE
+    MA --> STORE
+    DB --> Postgres[(PostgreSQL)]
+```
+
 ## 📂 Project Structure
 Built using **Turborepo**, the project is structured as follows:
 
@@ -47,11 +69,47 @@ The system uses an asynchronous webhook-based approach to add money from a bank.
 3.  **Webhook**: The bank server sends a POST request to `bank-webhook-handler`.
 4.  **Atomicity**: The webhook handler uses a database transaction to increment the user's balance and mark the transaction as `Success` simultaneously.
 
+```mermaid
+sequenceDiagram
+    participant U as User (App)
+    participant B as Bank Server
+    participant H as Webhook Handler
+    participant DB as Database
+    U->>DB: Create On-Ramp Transaction (Processing)
+    Note over U,DB: User is redirected to Bank
+    B->>H: POST /bankwebhook (Token, Amount, Secret)
+    H->>DB: Find Transaction & Verify Status
+    H->>DB: Atomic Update (Balance += Amount, Status = Success)
+    DB-->>H: Commit
+    H-->>B: 200 OK (Captured)
+```
+
 ### 2. P2P Transfer (User-to-User)
 To prevent "Double Spending" and ensure data consistency, the system uses **Database-Level Row Locking**.
 
 - **Mechanism**: `SELECT ... FOR UPDATE` in a Prisma raw query prevents concurrent modifications to the same balance row.
 - **Atomicity**: Increments, decrements, and transaction logging happen within a single ACID-compliant database transaction.
+
+```mermaid
+sequenceDiagram
+    participant A as User A (Sender)
+    participant B as User B (Receiver)
+    participant DB as Database
+    A->>DB: Initiate P2P Transfer
+    DB->>DB: Transaction Start
+    DB->>DB: Lock A's Balance Row (FOR UPDATE)
+    DB-->>A: Check Sufficient Funds
+    alt Sufficient Funds
+        DB->>DB: Decrement A's Balance
+        DB->>DB: Increment B's Balance
+        DB->>DB: Create Transfer Record
+        DB->>DB: Transaction Commit
+        A-->>A: Success
+    else Insufficient Funds
+        DB->>DB: Transaction Rollback
+        A-->>A: Error
+    end
+```
 
 ## 🔒 Security & Performance
 - **Webhook Secrets**: Validated on every request to `bank-webhook-handler`.
