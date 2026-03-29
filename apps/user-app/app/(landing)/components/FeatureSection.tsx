@@ -1,76 +1,131 @@
-import { Globe, Clock, Users, CreditCard, Smartphone, HeadphonesIcon } from 'lucide-react';
+import { Globe, Clock, Users, CreditCard, Smartphone, HeadphonesIcon } from "lucide-react";
+
+const features = [
+  {
+    icon: Globe,
+    title: "Global Reach",
+    description: "Send money to 190+ countries with competitive, real-time exchange rates.",
+    iconBg: "bg-blue-50",
+    iconColor: "text-blue-600",
+  },
+  {
+    icon: Clock,
+    title: "24/7 Service",
+    description: "Transfer money anytime, anywhere. Our infrastructure never sleeps.",
+    iconBg: "bg-emerald-50",
+    iconColor: "text-emerald-600",
+  },
+  {
+    icon: Users,
+    title: "Trusted by Millions",
+    description: "Over 50 million customers move their money with us every month.",
+    iconBg: "bg-violet-50",
+    iconColor: "text-violet-600",
+  },
+  {
+    icon: CreditCard,
+    title: "Multiple Payment Options",
+    description: "Bank transfer, debit card, credit card, or digital wallet — your choice.",
+    iconBg: "bg-amber-50",
+    iconColor: "text-amber-600",
+  },
+  {
+    icon: Smartphone,
+    title: "Mobile First",
+    description: "Our app makes sending money as effortless as sending a message.",
+    iconBg: "bg-rose-50",
+    iconColor: "text-rose-500",
+  },
+  {
+    icon: HeadphonesIcon,
+    title: "Expert Support",
+    description: "Award-winning support team available whenever you need help.",
+    iconBg: "bg-sky-50",
+    iconColor: "text-sky-600",
+  },
+];
 
 export default function FeaturesSection() {
-  const features = [
-    {
-      icon: Globe,
-      title: "Global Reach",
-      description: "Send money to over 190 countries and territories worldwide with competitive exchange rates.",
-      color: "text-blue-500"
-    },
-    {
-      icon: Clock,
-      title: "24/7 Service",
-      description: "Transfer money anytime, anywhere. Our service never sleeps, so your money is always moving.",
-      color: "text-green-500"
-    },
-    {
-      icon: Users,
-      title: "Trusted by Millions",
-      description: "Over 50 million customers trust us with their money transfers across the globe.",
-      color: "text-purple-500"
-    },
-    {
-      icon: CreditCard,
-      title: "Multiple Payment Options",
-      description: "Pay with credit card, debit card, bank transfer, or digital wallet - whatever works for you.",
-      color: "text-orange-500"
-    },
-    {
-      icon: Smartphone,
-      title: "Mobile First",
-      description: "Our mobile app makes sending money as easy as sending a text message.",
-      color: "text-pink-500"
-    },
-    {
-      icon: HeadphonesIcon,
-      title: "Expert Support",
-      description: "Get help when you need it with our award-winning customer support team.",
-      color: "text-indigo-500"
-    }
-  ];
-
   return (
-    <section className="bg-gray-50 mb-8">
-      <div className="absolute left-0 top-0 w-full h-1 bg-gradient-to-r from-blue-500 to-purple-500"></div>      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-16">
-          <h2 className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent p-2 rounded-full w-auto text-3xl md:text-5xl font-bold text-gray-900 mb-6">
-            Why Choose Our Platform?
+    <section className="relative bg-gray-950 py-24 lg:py-32 overflow-hidden">
+      {/* Subtle dot grid */}
+      <div
+        className="absolute inset-0 pointer-events-none opacity-[0.07]"
+        style={{
+          backgroundImage: "radial-gradient(circle, #ffffff 1px, transparent 1px)",
+          backgroundSize: "32px 32px",
+        }}
+      />
+      {/* Glow */}
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-blue-600/10 blur-3xl rounded-full pointer-events-none" />
+
+      <div className="relative z-10 max-w-[1180px] mx-auto px-6">
+
+        {/* Header */}
+        <div className="max-w-xl mb-20">
+          <p className="text-[11px] font-semibold tracking-[0.1em] uppercase text-blue-400 mb-4">
+            Why choose us
+          </p>
+          <h2
+            className="font-normal text-white mb-5 leading-[1.06] tracking-tight"
+            style={{
+              fontFamily: "'Georgia', 'Times New Roman', serif",
+              fontSize: "clamp(36px, 4.5vw, 58px)",
+            }}
+          >
+            Built for speed,{" "}
+            <em className="italic text-blue-400">trust,</em>{" "}
+            and scale.
           </h2>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            We've built the most comprehensive money transfer platform with features 
-            designed to make your life easier and your transfers more secure.
+          <p className="text-[16px] text-gray-400 font-light leading-relaxed">
+            Every feature is designed to make international money movement faster,
+            safer, and more transparent.
           </p>
         </div>
-        {/* Features card */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {features.map((feature, index) => (
-            <div 
+
+        {/* Feature grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-px bg-white/[0.06] border border-white/[0.08] rounded-2xl overflow-hidden">
+          {features.map(({ icon: Icon, title, description, iconBg, iconColor }, index) => (
+            <div
               key={index}
-              className=" p-8 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 group bg-gradient-to-br from-blue-900 via-blue-800 to-red-900 dark:bg-black dark: text-white"
+              className="relative bg-gray-950 p-8 group hover:bg-white/[0.03] transition-colors duration-200 flex flex-col gap-5"
             >
-              <div className={`w-16 h-16 rounded-full bg-gray-200 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300`}>
-                <feature.icon className={`h-8 w-8 ${feature.color}`} />
+              {/* Icon */}
+              <div className={`w-11 h-11 rounded-xl ${iconBg} flex items-center justify-center`}>
+                <Icon size={19} className={iconColor} />
               </div>
-              <h3 className="text-xl font-semibold text-gray-100 mb-4 dark:text-white">
-                {feature.title}
-              </h3>
-              <p className="text-gray-200 leading-relaxed">
-                {feature.description}
-              </p>
+
+              {/* Text */}
+              <div className="flex flex-col gap-2">
+                <h3 className="text-[15px] font-medium text-white tracking-tight">{title}</h3>
+                <p className="text-[13.5px] text-gray-500 leading-relaxed font-light">{description}</p>
+              </div>
+
+              {/* Subtle hover border accent */}
+              <div className="absolute bottom-0 left-8 right-8 h-px bg-blue-500/0 group-hover:bg-blue-500/20 transition-colors duration-300" />
             </div>
           ))}
         </div>
+
+        {/* Bottom stat strip */}
+        <div className="mt-px grid grid-cols-3 border border-white/[0.08] border-t-0 rounded-b-2xl overflow-hidden divide-x divide-white/[0.06] bg-white/[0.02]">
+          {[
+            { value: "190+", label: "Countries supported" },
+            { value: "50M+", label: "Customers worldwide" },
+            { value: "99.9%", label: "Uptime guaranteed" },
+          ].map(({ value, label }) => (
+            <div key={label} className="px-8 py-6 flex flex-col gap-1">
+              <span
+                className="text-[28px] font-normal text-white tracking-tight leading-none"
+                style={{ fontFamily: "'Georgia', serif" }}
+              >
+                {value}
+              </span>
+              <span className="text-[12.5px] text-gray-500">{label}</span>
+            </div>
+          ))}
+        </div>
+
       </div>
     </section>
   );

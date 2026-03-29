@@ -1,91 +1,95 @@
 'use client';
 
-import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
-import { Button } from '../ui/button';
-import { 
-  Plus, 
-  ArrowUpRight, 
-  ArrowDownRight, 
-  CreditCard,
-  PiggyBank,
-  Target
+import {
+  ArrowUpRight, ArrowDownRight, CreditCard, Target, PiggyBank
 } from 'lucide-react';
 
 const actions = [
   {
-    title: 'Add Income',
+    title: 'Add income',
     description: 'Record new income',
     icon: ArrowUpRight,
-    color: 'bg-green-100 text-green-600 hover:bg-green-200',
-    buttonColor: 'bg-green-600 hover:bg-green-700'
+    iconBg: 'bg-emerald-50',
+    iconColor: 'text-emerald-600',
   },
   {
-    title: 'Add Expense',
+    title: 'Add expense',
     description: 'Record new expense',
     icon: ArrowDownRight,
-    color: 'bg-red-100 text-red-600 hover:bg-red-200',
-    buttonColor: 'bg-red-600 hover:bg-red-700'
+    iconBg: 'bg-rose-50',
+    iconColor: 'text-rose-500',
   },
   {
-    title: 'Transfer Money',
+    title: 'Transfer money',
     description: 'Between accounts',
     icon: CreditCard,
-    color: 'bg-blue-100 text-blue-600 hover:bg-blue-200',
-    buttonColor: 'bg-blue-600 hover:bg-blue-700'
+    iconBg: 'bg-blue-50',
+    iconColor: 'text-blue-600',
   },
   {
-    title: 'Set Budget',
+    title: 'Set budget',
     description: 'Create spending limit',
     icon: Target,
-    color: 'bg-purple-100 text-purple-600 hover:bg-purple-200',
-    buttonColor: 'bg-purple-600 hover:bg-purple-700'
-  }
+    iconBg: 'bg-amber-50',
+    iconColor: 'text-amber-500',
+  },
 ];
 
 export default function QuickActions() {
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Quick Actions</CardTitle>
-        <p className="text-sm text-gray-600">Frequently used features</p>
-      </CardHeader>
-      <CardContent>
-        <div className="space-y-3">
-          {actions.map((action, index) => {
-            const Icon = action.icon;
-            return (
-              <Button
-                key={index}
-                variant="ghost"
-                className="w-full h-auto p-4 flex items-center justify-start space-x-3 hover:bg-gray-50"
-              >
-                <div className={`w-10 h-10 rounded-lg ${action.color} flex items-center justify-center`}>
-                  <Icon className="w-5 h-5" />
-                </div>
-                <div className="flex-1 text-left">
-                  <p className="font-medium text-gray-900">{action.title}</p>
-                  <p className="text-sm text-gray-500">{action.description}</p>
-                </div>
-              </Button>
-            );
-          })}
+    <div className="flex flex-col gap-1">
+
+      {/* Action rows */}
+      {actions.map(({ title, description, icon: Icon, iconBg, iconColor }, index) => (
+        <button
+          key={index}
+          className="w-full flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-gray-50 transition-colors duration-150 group text-left"
+        >
+          <div className={`w-9 h-9 rounded-xl ${iconBg} flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform duration-150`}>
+            <Icon size={16} className={iconColor} />
+          </div>
+          <div className="min-w-0 flex-1">
+            <p className="text-[13.5px] font-medium text-gray-900 tracking-tight">{title}</p>
+            <p className="text-[12px] text-gray-400 font-light">{description}</p>
+          </div>
+          <ArrowUpRight size={13} className="text-gray-300 group-hover:text-gray-500 flex-shrink-0 transition-colors duration-150 rotate-45" />
+        </button>
+      ))}
+
+      {/* Divider */}
+      <div className="mx-4 my-2 h-px bg-gray-100" />
+
+      {/* Savings goal widget */}
+      <div className="relative mx-2 mb-2 bg-gray-950 border border-white/[0.06] rounded-xl p-4 overflow-hidden">
+        {/* Dot grid */}
+        <div
+          className="absolute inset-0 pointer-events-none opacity-[0.07]"
+          style={{
+            backgroundImage: 'radial-gradient(circle, #ffffff 1px, transparent 1px)',
+            backgroundSize: '18px 18px',
+          }}
+        />
+        <div className="absolute top-0 right-0 w-24 h-24 bg-blue-600/10 blur-2xl rounded-full pointer-events-none" />
+
+        <div className="relative z-10">
+          <div className="flex items-center gap-2 mb-1">
+            <PiggyBank size={13} className="text-blue-400 flex-shrink-0" />
+            <p className="text-[12px] font-medium text-white tracking-tight">Savings goal</p>
+          </div>
+          <p className="text-[11.5px] text-gray-500 font-light mb-3">Emergency fund</p>
+
+          {/* Progress bar */}
+          <div className="w-full h-1 bg-white/[0.08] rounded-full overflow-hidden mb-2">
+            <div className="h-full bg-blue-500 rounded-full" style={{ width: '40%' }} />
+          </div>
+
+          <div className="flex items-center justify-between">
+            <span className="text-[11px] text-gray-600">₹2,000 saved</span>
+            <span className="text-[11px] text-blue-400 font-medium">40% of ₹5,000</span>
+          </div>
         </div>
-        {/* Saving goal */}
-        <div className="mt-6 p-4 bg-gradient-to-r from-[#6a51a6] to-[#8b5cf6] rounded-lg text-white">
-          <div className="flex items-center mb-2">
-            <PiggyBank className="w-5 h-5 mr-2" />
-            <span className="font-semibold">Savings Goal</span>
-          </div>
-          <p className="text-sm  mb-3">Emergency Fund</p>
-          <div className="w-full bg-white bg-opacity-20 rounded-full h-2 mb-2">
-            <div className="bg-white h-2 rounded-full" style={{ width: '40%' }}></div>
-          </div>
-          <div className="flex justify-between text-xs">
-            <span>₹2,000</span>
-            <span>₹5,000</span>
-          </div>
-        </div>
-      </CardContent>
-    </Card>
+      </div>
+
+    </div>
   );
 }

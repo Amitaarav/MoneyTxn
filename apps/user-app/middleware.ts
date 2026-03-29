@@ -6,7 +6,7 @@ export async function middleware(request: NextRequest) {
     const token = await getToken({ req: request, secret: process.env.JWT_SECRET || "_secret_" });
 
     // List of paths that require authentication
-    const protectedPaths = ["/dashboard", "/transfer", "/transaction", "/p2p"];
+    const protectedPaths = ["/dashboard", "/transfer", "/transaction", "/p2p", "/profile"];
     const isProtectedPath = protectedPaths.some(path =>
         request.nextUrl.pathname.startsWith(path)
     );
@@ -31,6 +31,7 @@ export const config = {
         "/transfer/:path*",
         "/transaction/:path*",
         "/p2p/:path*",
+        "/profile/:path*",
         "/signin",
         "/signup"
     ]

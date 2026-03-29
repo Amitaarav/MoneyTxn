@@ -17,10 +17,15 @@ export function AppbarClient() {
     router.push("/signin");
   };
 
+  const handleProfile = async () => {
+    router.push("/profile");
+  };
+
   return (
     <Appbar
       onSignin={handleSignin}
       onSignout={handleSignout}
+      getProfile={handleProfile}
       user={session?.user}
     />
   );

@@ -1,0 +1,36 @@
+version: "3.9"
+
+services:
+  db:
+    image: postgres:17.4
+    container_name: moneytxn_db
+    restart: unless-stopped
+
+    env_file:
+      - .env
+
+    ports:
+      - "${DB_PORT}:5432"   # Only for local development
+
+    volumes:
+      - moneytxn_pgdata:/var/lib/postgresql/data
+
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+    mem_limit: 512m
+    cpus: 1.0
+
+volumes:
+  moneytxn_pgdata:
+    driver: local

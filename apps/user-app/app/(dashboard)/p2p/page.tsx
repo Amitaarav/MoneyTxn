@@ -1,63 +1,86 @@
 import { SendMoneyCard } from "../../../components/SendMoneyCard";
 import { RecentP2P } from "../../../components/RecentP2P";
 import { getP2PTransfers } from "../../lib/actions/getP2PTransfers";
-import { Users2, ShieldCheck, Zap } from "lucide-react";
+import { Zap, ShieldCheck } from "lucide-react";
 
 export default async function P2PPage() {
-    const transfers = await getP2PTransfers();
+  const transfers = await getP2PTransfers();
 
-    return (
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-10">
-            {/* Header Area */}
-            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-                <div>
-                    <h1 className="text-4xl font-extrabold text-[#6a51a6] tracking-tight flex items-center gap-3">
-                        <Users2 className="w-8 h-8" />
-                        P2P Transfers
-                    </h1>
-                    <p className="text-slate-500 text-lg font-medium mt-1">Send money to friends and family instantly</p>
-                </div>
+  return (
+    <div className="max-w-[1080px] mx-auto px-6 py-8 flex flex-col gap-6">
+
+      {/* ── Page header ── */}
+      <div>
+        <p className="text-[10.5px] font-semibold tracking-[0.1em] uppercase text-blue-600 mb-2">
+          Transfers
+        </p>
+        <h1
+          className="text-[28px] font-normal text-gray-950 tracking-tight leading-tight mb-1"
+          style={{ fontFamily: "'Georgia', serif" }}
+        >
+          P2P <em className="italic text-blue-600">transfers.</em>
+        </h1>
+        <p className="text-[14px] text-gray-400 font-light">
+          Send money to friends and family instantly, anywhere.
+        </p>
+      </div>
+
+      {/* ── Main grid ── */}
+      <div className="grid grid-cols-1 xl:grid-cols-12 gap-6 items-start">
+
+        {/* Left: Send money */}
+        <div className="xl:col-span-5 flex flex-col gap-4">
+          <div>
+            <p className="text-[10.5px] font-semibold tracking-[0.1em] uppercase text-gray-400 mb-3">
+              Send funds
+            </p>
+            <div className="border border-gray-200 rounded-2xl bg-white overflow-hidden">
+              <SendMoneyCard />
             </div>
+          </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-                {/* Left Side - Main Action */}
-                <div className="lg:col-span-12 xl:col-span-5">
-                    <section>
-                        <h3 className="text-sm font-black uppercase tracking-widest text-slate-400 mb-4 ml-1">Transfer Funds</h3>
-                        <SendMoneyCard />
-                    </section>
-                </div>
-
-                {/* Right Side - History and Info */}
-                <div className="lg:col-span-12 xl:col-span-7 space-y-8">
-                    <section>
-                        <h3 className="text-sm font-black uppercase tracking-widest text-slate-400 mb-4 ml-1">Recent Activity</h3>
-                        <RecentP2P transfers={transfers} />
-                    </section>
-
-                    {/* Features Grid */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div className="bg-emerald-50/50 border border-emerald-100 rounded-2xl p-6 transition-all hover:shadow-md">
-                            <div className="bg-emerald-100 w-10 h-10 rounded-xl flex items-center justify-center mb-4">
-                                <Zap className="w-5 h-5 text-emerald-600" />
-                            </div>
-                            <h4 className="font-bold text-emerald-900 mb-1">Instant Settlement</h4>
-                            <p className="text-xs text-emerald-700/70 font-medium leading-relaxed">
-                                Recipients get the money in their wallet immediately with zero delays and no processing fees.
-                            </p>
-                        </div>
-                        <div className="bg-indigo-50/50 border border-indigo-100 rounded-2xl p-6 transition-all hover:shadow-md">
-                            <div className="bg-indigo-100 w-10 h-10 rounded-xl flex items-center justify-center mb-4">
-                                <ShieldCheck className="w-5 h-5 text-indigo-600" />
-                            </div>
-                            <h4 className="font-bold text-indigo-900 mb-1">Encrypted & Secure</h4>
-                            <p className="text-xs text-indigo-700/70 font-medium leading-relaxed">
-                                Every transaction is protected with military-grade encryption and atomic database transactions.
-                            </p>
-                        </div>
-                    </div>
-                </div>
+          {/* Feature tiles */}
+          <div className="grid grid-cols-2 gap-px bg-gray-200 border border-gray-200 rounded-2xl overflow-hidden">
+            <div className="bg-white p-5 flex flex-col gap-3">
+              <div className="w-9 h-9 rounded-xl bg-emerald-50 flex items-center justify-center">
+                <Zap size={16} className="text-emerald-600" />
+              </div>
+              <div>
+                <h4 className="text-[13px] font-medium text-gray-900 tracking-tight mb-1">
+                  Instant settlement
+                </h4>
+                <p className="text-[12px] text-gray-400 font-light leading-relaxed">
+                  Money lands in the recipient's wallet with zero delays.
+                </p>
+              </div>
             </div>
+            <div className="bg-white p-5 flex flex-col gap-3">
+              <div className="w-9 h-9 rounded-xl bg-blue-50 flex items-center justify-center">
+                <ShieldCheck size={16} className="text-blue-600" />
+              </div>
+              <div>
+                <h4 className="text-[13px] font-medium text-gray-900 tracking-tight mb-1">
+                  Encrypted & secure
+                </h4>
+                <p className="text-[12px] text-gray-400 font-light leading-relaxed">
+                  256-bit encryption with atomic database transactions.
+                </p>
+              </div>
+            </div>
+          </div>
         </div>
-    )
+
+        {/* Right: Recent activity */}
+        <div className="xl:col-span-7">
+          <p className="text-[10.5px] font-semibold tracking-[0.1em] uppercase text-gray-400 mb-3">
+            Recent activity
+          </p>
+          <div className="border border-gray-200 rounded-2xl bg-white overflow-hidden">
+            <RecentP2P transfers={transfers} />
+          </div>
+        </div>
+
+      </div>
+    </div>
+  );
 }
