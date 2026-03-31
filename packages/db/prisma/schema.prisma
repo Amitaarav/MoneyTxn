@@ -1,68 +1,326 @@
+// =============================================================================
+// Prisma Schema — Fintech Wallet Platform
+// Provider : PostgreSQL
+// Practices: Soft deletes, audit timestamps, UUID PKs, index optimization,
+//            proper enums, cascading rules, and separation of concerns.
+// =============================================================================
+
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
+  url      = env("DATABASE_URL") // Never hardcode credentials; always use env vars
 }
 
-model User {
-  id                Int                 @id @default(autoincrement())
-  email             String?             @unique
-  name              String?
-  number            String              @unique
-  password          String
-  OnRampTransaction OnRampTransaction[]
-  Balance           Balance[]
-  sentTransfers     P2PTransfer[]      @relation(name: "FromUserRelation")
-  receivedTransfers P2PTransfer[]      @relation(name:"ToUserRelation")
-}
+// =============================================================================
+// ENUMS
+// =============================================================================
 
-model Merchant {
-  id        Int      @id @default(autoincrement())
-  email     String   @unique
-  name      String?
-  auth_type AuthType
-}
-
-model OnRampTransaction {
-  id        Int          @id @default(autoincrement())
-  status    OnRampStatus
-  token     String       @unique
-  provider  String
-  amount    Int
-  startTime DateTime
-  userId    Int
-  user      User         @relation(fields: [userId], references: [id])
-}
-
-model Balance {
-  id     Int  @id @default(autoincrement())
-  userId Int  @unique
-  amount Int
-  locked Int
-  user   User @relation(fields: [userId], references: [id])
-}
-
+/// Authentication strategy used by a Merchant account.
+/// Extend this enum as new OAuth providers are added.
 enum AuthType {
   Google
   Github
 }
 
-enum OnRampStatus {
-  Success
-  Failure
-  Processing
+/// Lifecycle states for any fund movement (on-ramp or off-ramp).
+/// "Processing" is the initial state; transitions must be atomic in app logic.
+enum TransactionStatus {
+  Processing // Initiated, awaiting bank/provider confirmation
+  Success    // Confirmed and settled
+  Failure    // Rejected or timed-out
+  Reversed   // Refunded after initial success (charge-backs, disputes)
 }
 
+/// Direction of a bank ↔ wallet transfer, kept separate from P2P for clarity.
+enum RampType {
+  OnRamp  // Bank → Wallet (deposit)
+  OffRamp // Wallet → Bank (withdrawal)
+}
+
+// =============================================================================
+// USER
+// =============================================================================
+
+/// Core identity model for end-users of the wallet.
+/// - Email is optional (phone-first onboarding is common in South-Asian fintechs).
+/// - Password must be stored as a strong hash (bcrypt / argon2) — NEVER plaintext.
+/// - Soft-delete via `deletedAt` preserves referential integrity and audit trails.
+model User {
+  // ---------------------------------------------------------------------------
+  // Identity
+  // ---------------------------------------------------------------------------
+
+  /// Internal surrogate key — use UUID to prevent enumeration attacks.
+  /// Avoids leaking user count through sequential IDs in APIs.
+  id       String  @id @default(uuid()) @db.Uuid
+
+  /// Optional email — validate format and normalise to lowercase before storing.
+  email    String? @unique
+
+  /// Display name — sanitise to prevent XSS when rendered in UI.
+  name     String? @db.VarChar(100)
+
+  /// E.164 formatted phone number (+91XXXXXXXXXX).
+  /// Used as primary login identifier; must be verified via OTP before activation.
+  number   String  @unique @db.VarChar(15)
+
+  /// Hashed password — use argon2id with a work factor ≥ 3 (or bcrypt cost ≥ 12).
+  /// Rotate hashes on next login if the stored algorithm is outdated.
+  password String  @db.Text
+
+  // ---------------------------------------------------------------------------
+  // Security & Session
+  // ---------------------------------------------------------------------------
+
+  /// Incremented whenever the password changes or the account is compromised.
+  /// JWTs should embed this value so old tokens are automatically invalidated.
+  tokenVersion Int @default(0)
+
+  /// Marks account as locked after N failed login attempts.
+  /// Reset via admin action or time-based unlock; never expose the reason to the client.
+  isLocked Boolean @default(false)
+
+  // ---------------------------------------------------------------------------
+  // Audit & Soft-Delete
+  // ---------------------------------------------------------------------------
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  /// Soft-delete timestamp. Filter `WHERE deletedAt IS NULL` in all read queries.
+  /// Hard-delete only after the legal retention period (typically 7 years for finance).
+  deletedAt DateTime?
+
+  // ---------------------------------------------------------------------------
+  // Relations
+  // ---------------------------------------------------------------------------
+
+  balance           Balance?            // 1-to-1: one wallet per user
+  rampTransactions  RampTransaction[]   // All on-ramp and off-ramp records
+  sentTransfers     P2PTransfer[]       @relation("SenderRelation")
+  receivedTransfers P2PTransfer[]       @relation("ReceiverRelation")
+
+  // ---------------------------------------------------------------------------
+  // Indexes
+  // ---------------------------------------------------------------------------
+
+  @@index([email])
+  @@index([number])
+  @@index([deletedAt]) // Speeds up soft-delete filter on large tables
+
+  @@map("users") // Lowercase snake_case table names follow PostgreSQL conventions
+}
+
+// =============================================================================
+// MERCHANT
+// =============================================================================
+
+/// Represents a business entity that integrates with the wallet platform.
+/// Merchants use OAuth; they do NOT have a password field.
+model Merchant {
+  // ---------------------------------------------------------------------------
+  // Identity
+  // ---------------------------------------------------------------------------
+
+  id        String   @id @default(uuid()) @db.Uuid
+  email     String   @unique
+  name      String?  @db.VarChar(200)
+
+  /// OAuth provider used to authenticate this merchant account.
+  authType  AuthType
+
+  /// API secret (hashed) for server-to-server calls; NULL if not yet generated.
+  /// Treat like a password — hash with argon2id, rotate on exposure.
+  apiKeyHash String? @db.Text
+
+  /// Whether this merchant is approved to process live transactions.
+  isActive  Boolean  @default(false)
+
+  // ---------------------------------------------------------------------------
+  // Audit & Soft-Delete
+  // ---------------------------------------------------------------------------
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+
+  // ---------------------------------------------------------------------------
+  // Indexes
+  // ---------------------------------------------------------------------------
+
+  @@index([email])
+  @@index([isActive])
+
+  @@map("merchants")
+}
+
+// =============================================================================
+// BALANCE
+// =============================================================================
+
+/// Stores the real-time wallet balance for a user.
+/// ALL monetary values are stored in the SMALLEST currency unit (paise for INR,
+/// cents for USD) as plain integers to avoid floating-point rounding errors.
+///
+/// Invariant (enforced in application layer + DB CHECK constraint via migration):
+///   amount >= 0  AND  locked >= 0  AND  locked <= amount
+model Balance {
+  id     String @id @default(uuid()) @db.Uuid
+
+  /// One wallet per user — enforced by @unique on userId.
+  userId String @unique @db.Uuid
+  user   User   @relation(fields: [userId], references: [id], onDelete: Restrict)
+  //   onDelete: Restrict — prevent deleting a user who still has a balance.
+
+  /// Spendable balance in paise / smallest unit.
+  amount Int @default(0)
+
+  /// Funds reserved for in-flight transactions (e.g., pending P2P, off-ramp).
+  /// Deduct from `amount` only after the transaction is confirmed.
+  locked Int @default(0)
+
+  // Audit
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("balances")
+}
+
+// =============================================================================
+// RAMP TRANSACTION  (On-Ramp + Off-Ramp unified)
+// =============================================================================
+
+/// Unified table for both deposit (OnRamp) and withdrawal (OffRamp) transactions.
+/// Merging them reduces schema duplication while `type` discriminates direction.
+///
+/// Security notes:
+///   - `token` is a provider-issued idempotency/webhook token; validate HMAC
+///     signatures before trusting inbound webhooks.
+///   - Never store raw card/bank account numbers here — use provider-side tokens.
+model RampTransaction {
+  id       String @id @default(uuid()) @db.Uuid
+
+  /// Direction of fund flow.
+  type     RampType
+
+  /// Current lifecycle state. Transitions: Processing → Success | Failure | Reversed.
+  status   TransactionStatus @default(Processing)
+
+  /// Opaque token issued by the payment provider (e.g., Razorpay order_id).
+  /// Used for idempotency and webhook verification; must be treated as a secret.
+  token    String            @unique @db.VarChar(512)
+
+  /// Human-readable provider name (e.g., "razorpay", "stripe").
+  /// Store as lowercase; never trust this value for security decisions.
+  provider String            @db.VarChar(100)
+
+  /// Amount in smallest currency unit (paise). Must be > 0; enforce in app layer.
+  amount   Int
+
+  /// ISO 4217 currency code (e.g., "INR", "USD"). Defaults to INR.
+  currency String @default("INR") @db.Char(3)
+
+  /// When the transaction was initiated (may differ from `createdAt` if replayed).
+  startTime DateTime
+
+  /// When the final status was set (Success / Failure / Reversed).
+  settledAt DateTime?
+
+  /// Optional free-text failure reason from the provider; never expose to end-users.
+  failureReason String? @db.Text
+
+  // ---------------------------------------------------------------------------
+  // Relations
+  // ---------------------------------------------------------------------------
+
+  userId String @db.Uuid
+  user   User   @relation(fields: [userId], references: [id], onDelete: Restrict)
+
+  // ---------------------------------------------------------------------------
+  // Audit
+  // ---------------------------------------------------------------------------
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // ---------------------------------------------------------------------------
+  // Indexes
+  // ---------------------------------------------------------------------------
+
+  @@index([userId])
+  @@index([status])
+  @@index([type, status])    // Common filter: "show all pending deposits"
+  @@index([token])           // Idempotency lookups on webhook ingestion
+  @@index([startTime])       // Range queries for reporting / reconciliation
+
+  @@map("ramp_transactions")
+}
+
+// =============================================================================
+// P2P TRANSFER
+// =============================================================================
+
+/// Peer-to-peer wallet transfers between two users on the platform.
+///
+/// Atomicity guarantee (MUST be enforced in the application):
+///   All balance mutations (debit sender, credit receiver, lock/unlock) must
+///   happen inside a single Prisma `$transaction([...])` call.
+///   Never mutate balances outside a transaction.
 model P2PTransfer {
-  id         Int          @id @default(autoincrement())
-  amount     Int
-  timestamp  DateTime
-  fromUserId Int
-  fromUser   User         @relation(name: "FromUserRelation", fields: [fromUserId], references: [id])
-  toUserId   Int
-  toUser     User         @relation(name: "ToUserRelation", fields: [toUserId], references: [id])
-}
+  id String @id @default(uuid()) @db.Uuid
 
+  /// Amount in smallest currency unit. Must be > 0.
+  amount Int
+
+  /// ISO 4217 currency code.
+  currency String @default("INR") @db.Char(3)
+
+  /// Current lifecycle state — mirrors RampTransaction for consistency.
+  status TransactionStatus @default(Processing)
+
+  /// Optional note from sender (e.g., "Dinner split"). Sanitise before display.
+  note String? @db.VarChar(255)
+
+  /// Client-supplied idempotency key to prevent duplicate transfers on retries.
+  /// Generate on the client (UUID v4) and enforce uniqueness here.
+  idempotencyKey String @unique @db.Uuid
+
+  /// When the transfer was requested.
+  initiatedAt DateTime @default(now())
+
+  /// When the transfer reached a terminal state.
+  settledAt DateTime?
+
+  // ---------------------------------------------------------------------------
+  // Relations
+  // ---------------------------------------------------------------------------
+
+  fromUserId String @db.Uuid
+  fromUser   User   @relation("SenderRelation", fields: [fromUserId], references: [id], onDelete: Restrict)
+
+  toUserId String @db.Uuid
+  toUser   User   @relation("ReceiverRelation", fields: [toUserId], references: [id], onDelete: Restrict)
+
+  // ---------------------------------------------------------------------------
+  // Audit
+  // ---------------------------------------------------------------------------
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // ---------------------------------------------------------------------------
+  // Indexes
+  // ---------------------------------------------------------------------------
+
+  @@index([fromUserId])
+  @@index([toUserId])
+  @@index([status])
+  @@index([fromUserId, initiatedAt]) // Paginated transaction history for a user
+  @@index([toUserId,   initiatedAt])
+  @@index([idempotencyKey])          // Fast idempotency check on transfer initiation
+
+  @@map("p2p_transfers")
+}

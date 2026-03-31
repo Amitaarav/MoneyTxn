@@ -1,15 +1,13 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import { jwtVerify } from "jose";
-
-const JWT_SECRET = process.env.JWT_SECRET || "your-secret-key";
+import { getToken } from "next-auth/jwt";
 
 export async function middleware(request: NextRequest) {
-    const token = request.cookies.get("token")?.value;
+    const token = await getToken({ req: request, secret: process.env.JWT_SECRET || "_secret_" });
 
     // List of paths that require authentication
-    const protectedPaths = ["/dashboard", "/transfer", "/transaction", "/p2p"];
-    const isProtectedPath = protectedPaths.some(path => 
+    const protectedPaths = ["/dashboard", "/transfer", "/transaction", "/p2p", "/profile"];
+    const isProtectedPath = protectedPaths.some(path =>
         request.nextUrl.pathname.startsWith(path)
     );
 
@@ -17,18 +15,11 @@ export async function middleware(request: NextRequest) {
         if (!token) {
             return NextResponse.redirect(new URL("/signin", request.url));
         }
+    }
 
-        try {
-            // Verify the token
-            await jwtVerify(
-                token,
-                new TextEncoder().encode(JWT_SECRET)
-            );
-            return NextResponse.next();
-        } catch (error) {
-            // Token is invalid or expired
-            return NextResponse.redirect(new URL("/signin", request.url));
-        }
+    // Redirect to dashboard if user is already logged in and tries to access authentication pages
+    if (token && (request.nextUrl.pathname.startsWith("/signin") || request.nextUrl.pathname.startsWith("/signup"))) {
+        return NextResponse.redirect(new URL("/dashboard", request.url));
     }
 
     return NextResponse.next();
@@ -39,6 +30,9 @@ export const config = {
         "/dashboard/:path*",
         "/transfer/:path*",
         "/transaction/:path*",
-        "/p2p/:path*"
+        "/p2p/:path*",
+        "/profile/:path*",
+        "/signin",
+        "/signup"
     ]
-}; 
+};
