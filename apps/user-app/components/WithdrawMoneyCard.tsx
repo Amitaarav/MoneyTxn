@@ -1,65 +1,163 @@
-"use client"
-import { Button } from "@repo/ui/button";
-import { Card, CardHeader, CardTitle, CardContent } from "@repo/ui/card";
+"use client";
+
 import { useState } from "react";
-import { TextInput } from "@repo/ui/textinput"
-import { Select } from "@repo/ui/select";
+import { ArrowDownRight, Building2, ChevronDown, Shield, Clock } from "lucide-react";
 import { createOffRampTransaction } from "app/lib/actions/createOffRampTransaction";
 import { toast } from "sonner";
 
-const SUPPORTED_BANKS = [{
-    name: "HDFC Bank",
-    redirectUrl: "https://netbanking.hdfcbank.com"
-}, {
-    name: "Axis Bank",
-    redirectUrl: "https://www.axisbank.com/"
-}];
+const SUPPORTED_BANKS = [
+  { name: "HDFC Bank", redirectUrl: "https://netbanking.hdfcbank.com" },
+  { name: "Axis Bank", redirectUrl: "https://www.axisbank.com/"       },
+];
+
+const QUICK_AMOUNTS = [500, 1000, 2000, 5000];
+
+const inputClass =
+  "w-full h-11 px-3.5 text-[14px] text-gray-900 bg-white border border-gray-200 rounded-xl focus:outline-none focus:border-blue-500 placeholder:text-gray-400 transition-colors duration-150";
 
 export const WithdrawMoney = () => {
-    const [redirectUrl, setRedirectUrl] = useState(SUPPORTED_BANKS[0]?.redirectUrl);
-    const [amount, setAmount] = useState(0);
-    const [provider, setProvider] = useState("HDFC Bank");
-    const [message, setMessage] = useState("");
+  const [redirectUrl, setRedirectUrl] = useState(SUPPORTED_BANKS[0]?.redirectUrl ?? "");
+  const [amount, setAmount]           = useState("");
+  const [provider, setProvider]       = useState(SUPPORTED_BANKS[0]?.name ?? "");
+  const [isProcessing, setIsProcessing] = useState(false);
 
-    return (
-        <div className="w-full text-gray-900 space-y-6">
-            <div className="space-y-4">
-                <TextInput label={"Amount (₹)"} placeholder={"Enter amount e.g. 500"} onChange={(value) => {
-                    setAmount(Number(value))
-                }} />
+  const handleWithdraw = async () => {
+    const numAmount = Number(amount);
+    if (!numAmount || numAmount <= 0) {
+      toast.error("Please enter a valid amount");
+      return;
+    }
+    setIsProcessing(true);
+    try {
+      const res = await createOffRampTransaction(numAmount, provider);
+      if (res.message === "Off ramp transaction added") {
+        toast.success("Withdrawal request initiated!");
+        setAmount("");
+      } else {
+        toast.error(res.message);
+      }
+    } catch {
+      toast.error("Something went wrong. Please try again.");
+    } finally {
+      setIsProcessing(false);
+    }
+  };
 
-                <div className="space-y-2">
-                    <label className="text-sm font-bold text-slate-700">Bank Provider</label>
-                    <Select onSelect={(value: any) => {
-                        setRedirectUrl(SUPPORTED_BANKS.find(x => x.name === value)?.redirectUrl || "")
-                        setProvider(SUPPORTED_BANKS.find(x => x.name === value)?.name || "")
-                    }} options={SUPPORTED_BANKS.map(x => ({
-                        key: x.name,
-                        value: x.name
-                    }))} />
-                </div>
-            </div>
+  return (
+    <div className="p-6 flex flex-col gap-5">
 
-            <Button
-                onClick={async () => {
-                    const res = await createOffRampTransaction(amount, provider);
-                    setMessage(res.message);
-                    if (res.message === "Off ramp transaction added") {
-                        toast.success("Withdrawal request initiated!");
-                    } else {
-                        toast.error(res.message);
-                    }
-                }}
-                className="w-full border-2 border-[#6a51a6] text-[#6a51a6] hover:bg-[#6a51a6] hover:text-white py-3 rounded-xl font-bold transition-all active:scale-95 shadow-sm"
-            >
-                Request Withdrawal
-            </Button>
-
-            {message && <p className="text-xs text-center font-bold text-[#6a51a6] animate-pulse">{message}</p>}
-
-            <p className="text-[10px] text-center text-slate-400 font-medium">
-                Withdrawals may take up to 24-48 hours specialized on your bank.
-            </p>
+      {/* Amount input */}
+      <div className="flex flex-col gap-1.5">
+        <label className="text-[12.5px] font-medium text-gray-700 tracking-tight">
+          Amount
+        </label>
+        <div className="relative">
+          <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[14px] font-medium text-gray-400 pointer-events-none">
+            ₹
+          </span>
+          <input
+            type="number"
+            min="1"
+            placeholder="0.00"
+            value={amount}
+            onChange={(e) => setAmount(e.target.value)}
+            className={`${inputClass} pl-8`}
+          />
         </div>
-    );
-}
+
+        {/* Quick amount pills */}
+        <div className="flex items-center gap-2 mt-1">
+          {QUICK_AMOUNTS.map((amt) => (
+            <button
+              key={amt}
+              onClick={() => setAmount(String(amt))}
+              className={`flex-1 h-8 text-[12px] font-medium rounded-lg border transition-all duration-150 ${
+                amount === String(amt)
+                  ? "bg-gray-950 border-gray-950 text-white"
+                  : "bg-white border-gray-200 text-gray-600 hover:border-gray-400 hover:text-gray-900"
+              }`}
+            >
+              ₹{amt >= 1000 ? `${amt / 1000}k` : amt}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Bank select */}
+      <div className="flex flex-col gap-1.5">
+        <label className="text-[12.5px] font-medium text-gray-700 tracking-tight">
+          Destination bank
+        </label>
+        <div className="relative">
+          <Building2 size={14} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
+          <select
+            value={provider}
+            onChange={(e) => {
+              const bank = SUPPORTED_BANKS.find((b) => b.name === e.target.value);
+              setProvider(bank?.name ?? "");
+              setRedirectUrl(bank?.redirectUrl ?? "");
+            }}
+            className={`${inputClass} pl-9 pr-9 appearance-none cursor-pointer`}
+          >
+            {SUPPORTED_BANKS.map((b) => (
+              <option key={b.name} value={b.name}>{b.name}</option>
+            ))}
+          </select>
+          <ChevronDown size={13} className="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
+        </div>
+      </div>
+
+      {/* Summary row */}
+      {Number(amount) > 0 && (
+        <div className="flex items-center justify-between bg-gray-50 border border-gray-200 rounded-xl px-4 py-3">
+          <span className="text-[12.5px] text-gray-400">You're withdrawing</span>
+          <span
+            className="text-[16px] font-normal text-gray-950 tracking-tight"
+            style={{ fontFamily: "'Georgia', serif" }}
+          >
+            ₹{Number(amount).toLocaleString("en-IN", { minimumFractionDigits: 2 })}
+          </span>
+        </div>
+      )}
+
+      {/* Processing time note */}
+      <div className="flex items-center gap-2.5 bg-gray-50 border border-gray-200 rounded-xl px-4 py-3">
+        <Clock size={13} className="text-gray-400 flex-shrink-0" />
+        <p className="text-[12px] text-gray-500 font-light leading-relaxed">
+          Withdrawals typically arrive within{" "}
+          <span className="font-medium text-gray-700">24–48 hours</span>{" "}
+          depending on your bank.
+        </p>
+      </div>
+
+      {/* CTA */}
+      <button
+        onClick={handleWithdraw}
+        disabled={isProcessing || !amount || Number(amount) <= 0}
+        className="w-full h-11 bg-gray-950 hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed text-white text-[14px] font-medium tracking-tight rounded-xl flex items-center justify-center gap-2 transition-all duration-200 hover:shadow-[0_4px_16px_rgba(37,99,235,0.3)] group"
+      >
+        {isProcessing ? (
+          <>
+            <svg className="animate-spin h-4 w-4 text-white/70" fill="none" viewBox="0 0 24 24">
+              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
+            </svg>
+            Processing…
+          </>
+        ) : (
+          <>
+            Request withdrawal
+            <ArrowDownRight size={14} className="group-hover:translate-x-0.5 group-hover:translate-y-0.5 transition-transform duration-200" />
+          </>
+        )}
+      </button>
+
+      {/* Security note */}
+      <div className="flex items-center justify-center gap-1.5">
+        <Shield size={11} className="text-gray-300" />
+        <span className="text-[11.5px] text-gray-400">Secured with 256-bit encryption</span>
+      </div>
+
+    </div>
+  );
+};

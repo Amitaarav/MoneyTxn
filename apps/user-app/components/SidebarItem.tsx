@@ -16,19 +16,31 @@ export const SidebarItem = ({ href, title, icon }: SidebarItemProps) => {
 
   return (
     <div
-      className={`mx-2 my-1 px-4 py-3 rounded-xl cursor-pointer transition-all duration-200 group flex items-center space-x-3
-        ${isSelected
-          ? "bg-[#6a51a6] text-white shadow-md shadow-purple-200"
-          : "text-slate-600 hover:bg-[#6a51a6]/10 hover:text-[#6a51a6]"
-        }`}
       onClick={() => router.push(href)}
+      className={`mx-2 my-0.5 px-3 py-2.5 rounded-xl cursor-pointer transition-all duration-150 flex items-center gap-3 group
+        ${isSelected
+          ? "bg-blue-600 text-white"
+          : "text-gray-500 hover:text-white hover:bg-white/[0.06]"
+        }`}
     >
-      <div className={`transition-colors duration-200 ${isSelected ? "text-white" : "text-slate-400 group-hover:text-[#6a51a6]"}`}>
+      {/* Icon */}
+      <div className={`flex-shrink-0 transition-colors duration-150
+        ${isSelected ? "text-white" : "text-gray-600 group-hover:text-white"}`}
+      >
         {icon}
       </div>
-      <div className={`font-semibold transition-colors duration-200 ${isSelected ? "text-white" : "text-slate-600 group-hover:text-[#6a51a6]"}`}>
+
+      {/* Label */}
+      <span className={`text-[13.5px] font-medium tracking-tight transition-colors duration-150
+        ${isSelected ? "text-white" : "text-gray-500 group-hover:text-white"}`}
+      >
         {title}
-      </div>
+      </span>
+
+      {/* Active dot */}
+      {isSelected && (
+        <span className="ml-auto w-1 h-1 rounded-full bg-white/60 flex-shrink-0" />
+      )}
     </div>
   );
 };

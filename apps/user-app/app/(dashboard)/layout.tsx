@@ -14,6 +14,7 @@ export default function DashboardLayout({
             <SidebarItem href="/transaction" icon={<TransactionIcon />} title="Transaction" />
             <SidebarItem href="/p2p" icon={<P2PTransferIcon />} title="P2P Transfer" />
             <SidebarItem href="/merchant" icon={<MerchantIcon />} title="Merchant Transfer" />
+            <SidebarItem href="/profile" icon={<ProfileIcon />} title="Profile" />
           </div>
         </aside>
         <main className="flex-1 p-8 overflow-y-auto">{children}</main>
@@ -57,8 +58,16 @@ function P2PTransferIcon() {
 
 function MerchantIcon() {
   return (
-    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
       className="lucide lucide-scan-line-icon lucide-scan-line"><path d="M3 7V5a2 2 0 0 1 2-2h2" /><path d="M17 3h2a2 2 0 0 1 2 2v2" /><path d="M21 17v2a2 2 0 0 1-2 2h-2" /><path d="M7 21H5a2 2 0 0 1-2-2v-2" /><path d="M7 12h10" /></svg>
+  );
+}
+
+function ProfileIcon() {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5} className="w-5 h-5">
+      <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" />
+    </svg>
   );
 }
 

@@ -1,103 +1,155 @@
-import { Smartphone, Mail, MapPin, Facebook, X, Instagram, Linkedin } from 'lucide-react';
-import { FiLinkedin, FiFacebook, FiTwitter, FiInstagram } from "react-icons/fi";
-import { useRouter } from "next/navigation"
+"use client";
+
+import { Smartphone, Mail, MapPin } from "lucide-react";
+import { FiFacebook, FiTwitter, FiInstagram, FiLinkedin } from "react-icons/fi";
+
+const services = [
+  "Send Money",
+  "Receive Money",
+  "Track Transfer",
+  "Exchange Rates",
+  "Business Transfers",
+];
+
+const support = [
+  "Help Center",
+  "Contact Us",
+  "Security",
+  "Privacy Policy",
+  "Terms of Service",
+];
+
+const socials = [
+  { Icon: FiFacebook, href: "https://www.facebook.com/", hover: "hover:text-blue-400" },
+  { Icon: FiTwitter, href: "https://x.com/AmitAarav1205", hover: "hover:text-sky-400" },
+  { Icon: FiInstagram, href: "http://instagram.com/amitaarav_8/", hover: "hover:text-pink-400" },
+  { Icon: FiLinkedin, href: "https://www.linkedin.com/in/amitkrgupta8", hover: "hover:text-blue-400" },
+];
+
 export default function Footer() {
-  const router = useRouter();
   return (
-    <footer className="bg-gray-900 text-white">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-          {/* Company Info */}
-          <div className="space-y-6">
+    <footer className="relative bg-gray-950 border-t border-white/[0.06] overflow-hidden">
+      {/* Dot grid */}
+      <div
+        className="absolute inset-0 pointer-events-none opacity-[0.05]"
+        style={{
+          backgroundImage: "radial-gradient(circle, #ffffff 1px, transparent 1px)",
+          backgroundSize: "32px 32px",
+        }}
+      />
+      {/* Glow */}
+      <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[600px] h-[200px] bg-blue-600/[0.06] blur-3xl rounded-full pointer-events-none" />
+
+      <div className="relative z-10 max-w-[1180px] mx-auto px-6">
+
+        {/* Main grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 py-16 border-b border-white/[0.06]">
+
+          {/* Brand */}
+          <div className="flex flex-col gap-6">
             <div>
-              <h3 className="text-2xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
+              <span
+                className="text-[22px] font-normal text-white tracking-tight"
+                style={{ fontFamily: "'Georgia', serif" }}
+              >
                 MoneyTXN
-              </h3>
-              <p className="text-gray-400 mt-4 leading-relaxed">
-                The world's most trusted platform for international money transfers. 
+              </span>
+              <p className="text-[13.5px] text-gray-500 mt-3 leading-relaxed font-light">
+                The world's most trusted platform for international money transfers.
                 Fast, secure, and affordable.
               </p>
             </div>
-            
-            <div className="flex space-x-4">
-                <FiFacebook
-                  onClick={() => window.open("https://www.facebook.com/", "_blank")}
-                  className="h-6 w-6 text-gray-400 hover:text-blue-400 cursor-pointer transition-colors"
-                />
-                <FiTwitter
-                  onClick={() => window.open("https://x.com/AmitAarav1205", "_blank")}
-                  className="h-6 w-6 text-gray-400 hover:text-blue-400 cursor-pointer transition-colors"
-                />
-                <FiInstagram
-                  onClick={() => window.open("http://instagram.com/amitaarav_8/", "_blank")}
-                  className="h-6 w-6 text-gray-400 hover:text-pink-400 cursor-pointer transition-colors"
-                />
-                <FiLinkedin
-                  onClick={() => window.open("https://www.linkedin.com/in/amitkrgupta8", "_blank")}
-                  className="h-6 w-6 text-gray-400 hover:text-blue-400 cursor-pointer transition-colors"
-                />
-              
-              </div>
+
+            {/* Socials */}
+            <div className="flex items-center gap-3">
+              {socials.map(({ Icon, href, hover }) => (
+                <a
+                  key={href}
+                  href={href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={`w-8 h-8 rounded-lg bg-white/[0.05] border border-white/[0.08] flex items-center justify-center text-gray-500 ${hover} transition-colors duration-200`}
+                >
+                  <Icon size={14} />
+                </a>
+              ))}
+            </div>
           </div>
 
           {/* Services */}
           <div>
-            <h4 className="font-semibold text-lg mb-6">Services</h4>
+            <p className="text-[11px] font-semibold tracking-[0.1em] uppercase text-gray-600 mb-5">
+              Services
+            </p>
             <ul className="space-y-3">
-              <li><a href="#" className="text-gray-400 hover:text-white transition-colors">Send Money</a></li>
-              <li><a href="#" className="text-gray-400 hover:text-white transition-colors">Receive Money</a></li>
-              <li><a href="#" className="text-gray-400 hover:text-white transition-colors">Track Transfer</a></li>
-              <li><a href="#" className="text-gray-400 hover:text-white transition-colors">Exchange Rates</a></li>
-              <li><a href="#" className="text-gray-400 hover:text-white transition-colors">Business Transfers</a></li>
+              {services.map((item) => (
+                <li key={item}>
+                  <a
+                    href="#"
+                    className="text-[13.5px] text-gray-500 hover:text-white transition-colors duration-150 font-light"
+                  >
+                    {item}
+                  </a>
+                </li>
+              ))}
             </ul>
           </div>
 
           {/* Support */}
           <div>
-            <h4 className="font-semibold text-lg mb-6">Support</h4>
+            <p className="text-[11px] font-semibold tracking-[0.1em] uppercase text-gray-600 mb-5">
+              Support
+            </p>
             <ul className="space-y-3">
-              <li><a href="#" className="text-gray-400 hover:text-white transition-colors">Help Center</a></li>
-              <li><a href="#" className="text-gray-400 hover:text-white transition-colors">Contact Us</a></li>
-              <li><a href="#" className="text-gray-400 hover:text-white transition-colors">Security</a></li>
-              <li><a href="#" className="text-gray-400 hover:text-white transition-colors">Privacy Policy</a></li>
-              <li><a href="#" className="text-gray-400 hover:text-white transition-colors">Terms of Service</a></li>
+              {support.map((item) => (
+                <li key={item}>
+                  <a
+                    href="#"
+                    className="text-[13.5px] text-gray-500 hover:text-white transition-colors duration-150 font-light"
+                  >
+                    {item}
+                  </a>
+                </li>
+              ))}
             </ul>
           </div>
 
           {/* Contact */}
           <div>
-            <h4 className="font-semibold text-lg mb-6">Get in Touch</h4>
-            <div className="space-y-4">
-              <div className="flex items-center gap-3">
-                <Smartphone className="h-5 w-5 text-blue-400" />
-                <span className="text-gray-400">+1 (555) 123-4567</span>
-              </div>
-              <div className="flex items-center gap-3">
-                <Mail className="h-5 w-5 text-blue-400" />
-                <span className="text-gray-400">support@moneytxn.com</span>
-              </div>
-              <div className="flex items-center gap-3">
-                <MapPin className="h-5 w-5 text-blue-400" />
-                <span className="text-gray-400">Uttar Pradesh, India</span>
-              </div>
+            <p className="text-[11px] font-semibold tracking-[0.1em] uppercase text-gray-600 mb-5">
+              Get in touch
+            </p>
+            <div className="space-y-3">
+              {[
+                { icon: Smartphone, label: "+1 (555) 123-4567" },
+                { icon: Mail, label: "support@moneytxn.com" },
+                { icon: MapPin, label: "Uttar Pradesh, India" },
+              ].map(({ icon: Icon, label }) => (
+                <div key={label} className="flex items-center gap-3">
+                  <div className="w-7 h-7 rounded-lg bg-white/[0.04] border border-white/[0.07] flex items-center justify-center flex-shrink-0">
+                    <Icon size={13} className="text-gray-500" />
+                  </div>
+                  <span className="text-[13px] text-gray-500 font-light">{label}</span>
+                </div>
+              ))}
             </div>
           </div>
         </div>
 
-        <div className="border-t border-gray-800 mt-12 pt-8">
-          <div className="flex flex-col md:flex-row justify-between items-center">
-            <p className="text-gray-400 text-sm">
-              © 2025 MoneyTXN. All rights reserved.
-            </p>
-            <div className="flex items-center gap-6 mt-4 md:mt-0">
-              <span className="text-gray-400 text-sm">Licensed and regulated by FinCEN</span>
-              <div className="flex items-center gap-2">
-                <div className="w-2 h-2 bg-green-400 rounded-full"></div>
-                <span className="text-sm text-gray-400">All systems operational</span>
-              </div>
+        {/* Bottom bar */}
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 py-6">
+          <p className="text-[12.5px] text-gray-600">
+            © 2026 MoneyTXN. All rights reserved.
+          </p>
+          <div className="flex items-center gap-5">
+            <span className="text-[12.5px] text-gray-600">Licensed & regulated by FinCEN</span>
+            <div className="flex items-center gap-2 bg-white/[0.03] border border-white/[0.07] rounded-full px-3 py-1.5">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 shadow-[0_0_0_3px_rgba(16,185,129,0.15)]" />
+              <span className="text-[12px] text-gray-500">All systems operational</span>
             </div>
           </div>
         </div>
+
       </div>
     </footer>
   );
